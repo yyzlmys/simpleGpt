@@ -34,10 +34,10 @@ public class FileService
 
     public Result upload(File myFile) throws IOException {
         //windows
-        //java.io.File folder=new java.io.File("D:\\shixun\\" + "lib" + myFile.getLibId() + "\\");
+        java.io.File folder=new java.io.File("D:\\shixun\\" + "lib" + myFile.getLibId() + "\\");
 
         //linux
-        java.io.File folder=new java.io.File("/root/shixun/" + "lib" + myFile.getLibId() + "/");
+        //java.io.File folder=new java.io.File("/root/shixun/" + "lib" + myFile.getLibId() + "/");
 
         if(!folder.exists())
             folder.mkdirs();
@@ -56,10 +56,10 @@ public class FileService
         File file = fileMapper.getById(id);
 
         //win
-        //Path filePath = Paths.get("D:\\shixun\\" + "lib" + file.getLibId() + "\\"+file.getId()+"_"+file.getFileName());
+        Path filePath = Paths.get("D:\\shixun\\" + "lib" + file.getLibId() + "\\"+file.getId()+"_"+file.getFileName());
 
         //linux
-        Path filePath = Paths.get("/root/shixun/" + "lib" + file.getLibId() + "/"+file.getId()+"_"+file.getFileName());
+        //Path filePath = Paths.get("/root/shixun/" + "lib" + file.getLibId() + "/"+file.getId()+"_"+file.getFileName());
 
         byte[] fileBytes = Files.readAllBytes(filePath);
 
@@ -80,10 +80,10 @@ public class FileService
         File file = fileMapper.getById(id);
 
         //win
-        //Path filePath = Paths.get("D:\\shixun\\" + "lib" + file.getLibId() + "\\"+file.getId()+"_"+file.getFileName());
+        Path filePath = Paths.get("D:\\shixun\\" + "lib" + file.getLibId() + "\\"+file.getId()+"_"+file.getFileName());
 
         //linux
-        Path filePath = Paths.get("/root/shixun/" + "lib" + file.getLibId() + "/"+file.getId()+"_"+file.getFileName());
+        //Path filePath = Paths.get("/root/shixun/" + "lib" + file.getLibId() + "/"+file.getId()+"_"+file.getFileName());
 
         libMapper.updateSizeById(libMapper.selectSizeById(file.getLibId())-file.getSize(), file.getLibId());
 

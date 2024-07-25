@@ -51,10 +51,10 @@ public class LibService {
     public Result delete(Integer id)
     {
         //windows
-        //java.io.File folder=new java.io.File("D:\\shixun\\" + "lib" + id + "\\");
+        java.io.File folder=new java.io.File("D:\\shixun\\" + "lib" + id + "\\");
 
         //linux
-        java.io.File folder=new java.io.File("/root/shixun/" + "lib" + id + "/");
+        //java.io.File folder=new java.io.File("/root/shixun/" + "lib" + id + "/");
 
         deleteDirectory(folder);
         fileMapper.deleteByLibId(id);

@@ -2,8 +2,10 @@ package com.gaorch.demo02.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gaorch.demo02.entity.Conversation;
+import com.gaorch.demo02.entity.Lib;
 import com.gaorch.demo02.entity.Message;
 import com.gaorch.demo02.mapper.ConversationMapper;
+import com.gaorch.demo02.mapper.LibMapper;
 import com.gaorch.demo02.mapper.MessageMapper;
 import com.gaorch.demo02.utils.Result;
 import jakarta.annotation.PostConstruct;
@@ -19,6 +21,7 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -29,19 +32,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class MessageService
 {
-    @Data
-    private class MessageDTO
-    {
-        private Conversation conversation;
-        private Message message;
-        private List<Message> lastMessages;
-    }
 
     @Autowired
     private MessageMapper messageMapper;
 
     @Autowired
     private ConversationMapper conversationMapper;
+
+    @Autowired
+    private LibMapper libMapper;
 
     public Result insert(Message message)
     {
@@ -76,6 +75,16 @@ public class MessageService
     /**
      * 发送消息到对应的 WebSocket 连接
      */
+    @Data
+    private class MessageDTO
+    {
+        private Integer libId;
+        private String name;
+        private String description;
+        private Message message;
+        private List<Message> lastMessages;
+    }
+
     public Result sendMessage(Message message) throws IOException {
         Integer conversationId = message.getConversationId();
         MessageDTO messageDTO = new MessageDTO();
@@ -87,8 +96,13 @@ public class MessageService
             session = createWebSocketSession(conversationId);
             sessions.put(conversationId, session);
             Conversation conversation = conversationMapper.selectById(conversationId);
-            messageDTO.setConversation(conversation);
-
+            if(conversation.getIfUseLib() == 1)
+            {
+                messageDTO.setLibId(conversation.getLibId());
+                Lib lib = libMapper.selectById(conversation.getLibId());
+                messageDTO.setName(lib.getName());
+                messageDTO.setDescription(lib.getDescription());
+            }
             List<Message> messages = messageMapper.selectLastMessagesByConversationId(conversationId, 10);
             messageDTO.setLastMessages(messages);
         }
