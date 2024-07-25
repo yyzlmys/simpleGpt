@@ -61,7 +61,7 @@ export default {
               type: 'success',
               message: '修改成功！'
             });
-            this.getInfo();
+            this.logout(); 
           } else {
             this.$message({
               type: 'error',
@@ -76,6 +76,7 @@ export default {
         });
       });
     },
+
     changePassword() {
       this.$prompt('请输入密码', '提示', {
         confirmButtonText: '确定',

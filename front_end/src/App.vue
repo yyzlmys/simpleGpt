@@ -63,6 +63,7 @@ export default {
   methods:{
     init()
     {
+      this.isLogin = false;
       if(getToken())
       {
         this.isLogin = true;
