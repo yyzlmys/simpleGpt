@@ -4,7 +4,7 @@
       <el-aside width="15%">
         <el-row class="tac">
             <el-col>
-              <ChatConversation :conversations="conversations" :curConversation="curConversationId" @selected="handleSelect" />
+              <ChatConversation v-loading="conversationLoading" :conversations="conversations" :curConversation="curConversationId" @selected="handleSelect" />
             </el-col>
         </el-row>
       </el-aside>
@@ -12,7 +12,7 @@
         <div class="head-tool">
           <div class="choose-knowledgeBase">
             <el-select v-model="curKnowledgeBase" :disabled="isSelectDisabled" placeholder="Select" size="large" style="width: 200px">
-              <el-option
+              <el-option v-loading="knowledgeBasesLoading"
                 v-for="item in knowledgeBases"
                 :key="item.id"
                 :label="item.name"
@@ -34,7 +34,7 @@
         <div class="chat-content">
           <div class="chat-history">
             <div v-if="this.curConversationId!='new'">
-              <ChatHistory :chatHistory="chatHistory" />
+              <ChatHistory v-loading="historyLoading" :chatHistory="chatHistory" />
             </div>
             <div v-else>
               <ChatWelcome />
@@ -61,7 +61,7 @@ import ChatHistory from './ChatHistory.vue';
 import ChatConversation from './ChatConversation.vue';
 import ChatWelcome from './ChatWelcome.vue';
 import { api_listChatHistory, api_createConversation, api_deleteConversation, 
-  api_listConversations, api_getResponse, } from '@/api/chat'
+  api_listConversations, api_getResponse } from '@/api/chat'
 import { api_listKnowledgeBases } from '@/api/knowledgeBase';
 
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -89,7 +89,11 @@ export default {
       curKnowledgeBase: 'no',
       ws: null,
       receivedStr: '',
-      sendDisabled: false
+      sendDisabled: false,
+      conversationLoading: true,
+      historyLoading: true,
+      knowledgeBasesLoading: true,
+      isGPTthinking: false,
     };
   },
   beforeDestroy() {
@@ -103,8 +107,9 @@ export default {
       this.listConversions();
     },
 
-    listChatHistory(id) {
-      api_listChatHistory(id)
+    async listChatHistory(id) {
+      this.historyLoading = true;
+      await api_listChatHistory(id)
       .then((response)=>{
         if(response.data.code == 200)
         {
@@ -118,10 +123,12 @@ export default {
           })
         }
       })
+      this.historyLoading = false;
     },
 
-    listKnowlwdgeBase() {
-      api_listKnowledgeBases()
+    async listKnowlwdgeBase() {
+      this.knowledgeBasesLoading = true;
+      await api_listKnowledgeBases()
       .then((response)=>{
         if(response.data.code == 200)
         {
@@ -135,10 +142,12 @@ export default {
           });
         }
       })
+      this.knowledgeBasesLoading = false;
     },
 
-    listConversions() {
-      api_listConversations()
+    async listConversions() {
+      this.conversationLoading = true;
+      await api_listConversations()
       .then((response)=>{
         if(response.data.code == 200)
         {
@@ -152,6 +161,7 @@ export default {
           });
         }
       })
+      this.conversationLoading = false;
     },
 
     async getResponse() {
@@ -178,8 +188,10 @@ export default {
         }
         api_getResponse(curForm)
         .then((response)=>{
-          if(response.data.code == 201)
-          {
+          if(response.data.code == 200) {
+            this.isGPTthinking = true;
+          }
+          else {
             ElMessage({
               message: '网络异常，请重试！',
               type: 'error',
@@ -194,7 +206,7 @@ export default {
         this.chatHistory.push(curHumanMessage);
         const curAIMessage = {
           isPerson: false,
-          content: ''
+          content: 'GPT正在思考您的问题，请稍等...'
         };
         this.chatHistory.push(curAIMessage);
       }
@@ -215,6 +227,11 @@ export default {
       };
 
       this.ws.onmessage = (event) => {
+        if(this.isGPTthinking)
+        {
+          this.isGPTthinking = false;
+          this.chatHistory[this.chatHistory.length - 1].content = '';
+        }
         this.receivedStr += event.data; // 追加收到的字符
         this.chatHistory[this.chatHistory.length - 1].content = this.receivedStr;
       };
@@ -269,10 +286,7 @@ export default {
         }
         else
         {
-          // console.log('获取新id');
-          // console.log(response.data.data);
           this.curConversationId = response.data.data;
-          // console.log(this.curConversationId);
           this.listConversions();
         }
       });
@@ -284,6 +298,7 @@ export default {
         this.listChatHistory(id);
       }
       this.curConversationId = id;
+      this.curKnowledgeBase = this.conversations.find(item => item.id === this.curConversationId).libId;
     },
 
     handleDeleteConversion() {

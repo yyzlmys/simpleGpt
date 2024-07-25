@@ -1,5 +1,5 @@
 <template>
-    <div class="knowledge-base-list">
+    <div class="knowledge-base-list" v-loading="loading">
       <KnowledgeBaseItem 
         v-for="(item, index) in knowledgeBases" 
         :key="index" 
@@ -55,12 +55,16 @@
         name: '',
         description: ''
       });
+
+      const loading = ref(true);
   
       const fetchKnowledgeBases = async () => {
-        api_listKnowledgeBases()
+        loading.value = true;
+        await api_listKnowledgeBases()
         .then((response)=>{
           knowledgeBases.value = response.data.data;
         })
+        loading.value = false;
       };
   
       const handleItemClick = (id) => {
@@ -93,12 +97,13 @@
         form.value = {name: ''};
         dialogFormVisible.value = false;
       };
-  
+
       onMounted(fetchKnowledgeBases);
   
       return {
         knowledgeBases,
         form,
+        loading,
         dialogFormVisible,
         formLabelWidth,
         handleItemClick,

@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <el-descriptions class="info-section" title="个人信息" :column="1" border >
+      <el-descriptions v-loading="loading" class="info-section" title="个人信息" :column="1" border >
         <el-descriptions-item>
           <template #label>
             <el-icon :style="iconStyle">
@@ -33,16 +33,19 @@ export default {
   },
   data() {
     return {
-      info: null
+      info: null,
+      loading: true,
     };
   },
   methods: {
-    init() {
-      this.getInfo();
+    async init() {
+      this.loading = true;
+      await this.getInfo();
+      this.loading = false;
     },
 
-    getInfo() {
-      api_getInfo().then((response) => {
+    async getInfo() {
+      await api_getInfo().then((response) => {
         this.info = response.data.data;
       });
     },
