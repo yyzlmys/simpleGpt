@@ -51,12 +51,12 @@ export default {
       this.$prompt('请输入昵称', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        inputPattern: /.{1,}/,
-        inputErrorMessage: '昵称不能少于1位'
+        inputPattern: /.{6,}/,
+        inputErrorMessage: '昵称不能少于6位'
       }).then(({ value }) => {
         const username = value;
         api_update(username).then((response) => {
-          if (response.data.code == 20000) {
+          if (response.data.code == 200) {
             this.$message({
               type: 'success',
               message: '修改成功！'
