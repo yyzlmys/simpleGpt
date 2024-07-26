@@ -83,6 +83,7 @@ public class MessageService
         private String description;
         private Message message;
         private List<Message> lastMessages;
+        private Integer isFirst = 0;
     }
 
     public Result sendMessage(Message message) throws IOException {
@@ -105,6 +106,7 @@ public class MessageService
             }
             List<Message> messages = messageMapper.selectLastMessagesByConversationId(conversationId, 10);
             messageDTO.setLastMessages(messages);
+            messageDTO.setIsFirst(1);
         }
 
         message.setIsPerson(1);

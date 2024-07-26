@@ -1,10 +1,7 @@
 package com.gaorch.demo02.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gaorch.demo02.entity.Conversation;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -20,4 +17,10 @@ public interface ConversationMapper extends BaseMapper<Conversation>
 
     @Select("select * from conversation where id = #{id}")
     public Conversation selectById(Integer id);
+
+    @Update("update conversation set name = #{name} where id = #{id}")
+    public int updateNameById(String name, Integer id);
+
+    @Select("select name from conversation where id = #{id}")
+    public String getNameById(Integer id);
 }

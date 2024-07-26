@@ -181,7 +181,7 @@ export default {
           await this.handleCreateConversion();
         }
         // 建立 websocket 
-        this.initWebsocket('ws://firstdraft.cn:8080/get');
+        this.initWebsocket('ws://localhost:8080/get');
         const curForm = {
           "conversationId": this.curConversationId,
           "content": this.inputString

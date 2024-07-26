@@ -30,4 +30,16 @@ public class ConversationController
     {
         return conversationService.delete(id);
     }
+
+    @PostMapping("/name")
+    public void name(@RequestBody Conversation conversation)
+    {
+        conversationService.name(conversation.getName(), conversation.getId());
+    }
+
+    @GetMapping("/name/{id}")
+    public Result getName(@PathVariable Integer id)
+    {
+        return conversationService.getName(id);
+    }
 }

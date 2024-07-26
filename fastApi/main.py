@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import uvicorn
 import json
 from Chat import Chat
+import requests
 
 app = FastAPI()
 
@@ -35,6 +36,8 @@ async def spring(websocket: WebSocket):
     description = None
     history = []
     chat = Chat()
+    m3eDir = "/root/m3e"
+    #m3eDir = "./m3e"
 
     while True:
         try:
@@ -43,7 +46,7 @@ async def spring(websocket: WebSocket):
             question = data["message"]["content"]
             isFirst = False
 
-            if data["lastMessages"] != None:                # 第一次对话
+            if data["isFirst"] == 1:                # 第一次对话
                 libId = data["libId"]
                 name = data["name"]
                 description = data["description"]
@@ -58,14 +61,26 @@ async def spring(websocket: WebSocket):
                 skt = await sockets.get(conversationId)
                 await asyncio.sleep(0.01)
 
+            libDir = None
+            if libId != None:
+                libDir =  "/root/shixun/lib" + str(libId)
+                #libDir = "D:/shixun/lib" + str(libId)
+
             if isFirst == False:
                 reply = await chat.notFirst(skt, question)
             else:
-                reply = await chat.isFirst(skt, question, libId, history, name, description)
+                reply, conversationName =await chat.isFirst(skt, question, libDir, history, m3eDir)
 
             await websocket.send_text(reply)
-            await skt.close()
             await sockets.delete(conversationId)
+
+            url = "http://localhost:619/conversation/name"
+            d = {
+                "name": conversationName,
+                "id": int(conversationId)
+            }
+            headers = {'Content-Type': 'application/json'}
+            requests.post(url, data=json.dumps(d), headers=headers)
 
         except WebSocketDisconnect:
             break
@@ -78,7 +93,7 @@ async def client(websocket: WebSocket):
     await sockets.set(conversationId, websocket)
     # 保持连接打开状态
     while True:
-        await asyncio.sleep(10)
+        await asyncio.sleep(1)
 
 
 if __name__ == "__main__":

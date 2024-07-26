@@ -62,6 +62,17 @@ public class ConversationService
             delete(conversation.getId());
         }
     }
+
+    public void name(String name, Integer id)
+    {
+        conversationMapper.updateNameById(name, id);
+    }
+
+    public Result getName(Integer id)
+    {
+        String name = conversationMapper.getNameById(id);
+        return Result.ok(name);
+    }
 }
 
 
