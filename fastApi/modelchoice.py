@@ -68,7 +68,7 @@ def get_zhipu_chat_model():
     )
     return chat_model_zhipuai
 
-def get_tongyiqwen_chat_model():
+def get_tongyi_chat_model():
     from langchain_community.chat_models.tongyi import ChatTongyi
     chat_model_tongyiqwen = ChatTongyi(
         temperature=0.8,
