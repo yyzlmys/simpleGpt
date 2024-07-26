@@ -1,12 +1,12 @@
 CREATE TABLE `conversation` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `userId` bigint NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
   `ifUseLib` tinyint(1) NOT NULL,
   `libId` bigint DEFAULT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 
 CREATE TABLE `file` (
   `id` bigint NOT NULL AUTO_INCREMENT,
