@@ -96,6 +96,7 @@ class Chat:
             chunked_documents = [Document(page_content='you should use your own ability to answer the question.')]
         self.vector_store = FAISS.from_documents(documents=chunked_documents, embedding=embeddings)
 
+
     # 创建检索链
     def create_retriever_chain(self):
 
