@@ -42,3 +42,11 @@ export function api_getResponse(data) {
     data
   })
 }
+
+// get conversation
+export function api_getConversationName(id) {
+  return request({
+    url: `/conversation/name/${id}`,
+    method: 'get',
+  })
+}

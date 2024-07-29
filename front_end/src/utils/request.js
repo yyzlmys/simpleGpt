@@ -16,7 +16,6 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    // do something before request is sent
 
     // 在所有网络请求的请求头中加 token
     config.headers['X-Token'] = getToken()
@@ -33,7 +32,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     (response) => {
-        if(response.data.code == 401) //状态码40001: 未授权，需要登录
+        if(response.data.code == 401) //状态码401 未授权，需要登录
         {   
           if(router.currentRoute.name != '401')
             router.push('/403');

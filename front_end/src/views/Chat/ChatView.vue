@@ -61,7 +61,7 @@ import ChatHistory from './ChatHistory.vue';
 import ChatConversation from './ChatConversation.vue';
 import ChatWelcome from './ChatWelcome.vue';
 import { api_listChatHistory, api_createConversation, api_deleteConversation, 
-  api_listConversations, api_getResponse } from '@/api/chat'
+  api_listConversations, api_getResponse, api_getConversationName } from '@/api/chat'
 import { api_listKnowledgeBases } from '@/api/knowledgeBase';
 
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -90,10 +90,11 @@ export default {
       ws: null,
       receivedStr: '',
       sendDisabled: false,
-      conversationLoading: true,
-      historyLoading: true,
-      knowledgeBasesLoading: true,
+      conversationLoading: false,
+      historyLoading: false,
+      knowledgeBasesLoading: false,
       isGPTthinking: false,
+      isNeedGetName: false,
     };
   },
   beforeDestroy() {
@@ -152,6 +153,11 @@ export default {
         if(response.data.code == 200)
         {
           this.conversations = response.data.data
+          this.conversations.forEach(conversation => {
+            if (!conversation.ifUseLib) {
+              conversation.libId = 'no';
+            }
+          });
         }
         else if(response.data.code == 201)
         {
@@ -174,14 +180,15 @@ export default {
       }
       else
       {
-        // 首先，若是新聊天，创建对话
+        // 若是新聊天，创建对话
         if(this.curConversationId == 'new')
         {
           this.chatHistory = [];
           await this.handleCreateConversion();
+          this.isNeedGetName = true;
         }
         // 建立 websocket 
-        this.initWebsocket('ws://localhost:8080/get');
+        this.initWebsocket('ws://firstdraft.cn:8080/get');
         const curForm = {
           "conversationId": this.curConversationId,
           "content": this.inputString
@@ -213,6 +220,10 @@ export default {
       
     },
 
+    async delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
     initWebsocket(url) {
       if (this.ws) {
         this.ws.close();
@@ -236,10 +247,19 @@ export default {
         this.chatHistory[this.chatHistory.length - 1].content = this.receivedStr;
       };
 
-      this.ws.onclose = () => {
+      this.ws.onclose = async () => {
         console.log('WebSocket connection closed');
         this.receivedStr = '';
         this.sendDisabled = false;
+        if(this.isNeedGetName)
+        {
+          await this.delay(10000);
+          await api_getConversationName(this.curConversationId)
+          .then((response)=>{
+            this.conversations.find(item => item.id === this.curConversationId).name = response.data.data;
+          });
+          this.isNeedGetName = false;
+        }
       };
 
       this.ws.onerror = (error) => {
