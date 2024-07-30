@@ -208,7 +208,7 @@ export default {
         .then(()=>{
           api_deleteKnowledgeBase(this.id)
           .then((response)=>{
-            if(response == 200)
+            if(response.data.code == 200)
             {
               ElMessage({
                 message: '删除成功!',
