@@ -71,16 +71,17 @@ async def spring(websocket: WebSocket):
             else:
                 reply, conversationName =await chat.isFirst(skt, question, libDir, history, m3eDir)
 
+                if conversationName != None:
+                    url = "http://localhost:619/conversation/name"
+                    d = {
+                        "name": conversationName,
+                        "id": int(conversationId)
+                    }
+                    headers = {'Content-Type': 'application/json'}
+                    requests.post(url, data=json.dumps(d), headers=headers)
+
             await websocket.send_text(reply)
             await sockets.delete(conversationId)
-
-            url = "http://localhost:619/conversation/name"
-            d = {
-                "name": conversationName,
-                "id": int(conversationId)
-            }
-            headers = {'Content-Type': 'application/json'}
-            requests.post(url, data=json.dumps(d), headers=headers)
 
         except WebSocketDisconnect:
             break
