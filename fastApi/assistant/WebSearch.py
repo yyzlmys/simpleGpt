@@ -1,6 +1,6 @@
 from collections import deque
 from langchain.agents import create_react_agent, AgentExecutor, AgentOutputParser
-from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
+from langchain.memory import ConversationBufferMemory
 from langchain_core.agents import AgentAction, AgentFinish
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
@@ -8,7 +8,7 @@ from langchain_core.tools import Tool
 from langchain_community.utilities import GoogleSerperAPIWrapper
 from typing import Union
 import re
-from modelchoice.modelchoise import (
+from Utils.modelchoice import (
     os_setenv,
     get_zhipu_chat_model,
 )

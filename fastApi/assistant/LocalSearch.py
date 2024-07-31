@@ -13,7 +13,7 @@ import re
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from modelchoice.modelchoise import (
+from Utils.modelchoice import (
     os_setenv,
     get_zhipu_chat_model
 )
