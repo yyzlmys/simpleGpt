@@ -13,8 +13,6 @@ from Utils.modelchoice import (
     get_zhipu_chat_model,
 )
 
-os_setenv()
-
 class SearchWithReferences:
     def __init__(self):
         self.search = GoogleSerperAPIWrapper(k=3)
