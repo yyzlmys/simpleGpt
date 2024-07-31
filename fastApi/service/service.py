@@ -4,6 +4,8 @@ from Utils.hashmap import AsyncDict
 from webSearchService import WebSearchService
 from localSearchService import LocalSearchService
 from defaultChatService import DefaultChatService
+from codeChatService import CodeChatService
+from TemplateChatService import TemplateChatService
 
 sockets = AsyncDict()
 
@@ -27,12 +29,15 @@ class Service:
             libId = preData["libId"]
             if libId != None:
                 self.chat = LocalSearchService()
-                await self.chat.work(preData, websocket, sockets)
             else:
                 self.chat = DefaultChatService()
-                await self.chat.work(preData, websocket, sockets)
         elif robotId == 2:
             self.chat = WebSearchService()
-            await self.chat.work(preData, websocket, sockets)
+        elif robotId == 3:
+            self.chat = CodeChatService()
+        else:
+            self.chat = TemplateChatService()
+
+        await self.chat.work(preData, websocket, sockets)
 
 

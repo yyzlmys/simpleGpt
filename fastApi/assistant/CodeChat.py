@@ -1,7 +1,7 @@
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
 
-from modelchoice.modelchoise import (
+from Utils.modelchoice import (
     os_setenv,
     get_zhipu_chat_model
 )
