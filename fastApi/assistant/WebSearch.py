@@ -14,8 +14,6 @@ from modelchoice.modelchoise import (
 )
 
 os_setenv()
-chat_model = get_zhipu_chat_model()
-
 
 class SearchWithReferences:
     def __init__(self):
@@ -68,7 +66,7 @@ class MyAgentOutputParser(AgentOutputParser):
 class WebSearchChat:
     def __init__(self, history: list[str]):
         os_setenv()
-        self.chat_model = get_openai_chat_model()
+        self.chat_model = get_zhipu_chat_model()
         self.search_with_references = SearchWithReferences()
         self.tools = None
         self.agent_prompt = None
