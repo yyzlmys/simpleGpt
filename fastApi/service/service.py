@@ -3,6 +3,7 @@ import json
 from Utils.hashmap import AsyncDict
 from webSearchService import WebSearchService
 from localSearchService import LocalSearchService
+from defaultChatService import DefaultChatService
 
 sockets = AsyncDict()
 
@@ -26,6 +27,9 @@ class Service:
             libId = preData["libId"]
             if libId != None:
                 self.chat = LocalSearchService()
+                await self.chat.work(preData, websocket, sockets)
+            else:
+                self.chat = DefaultChatService()
                 await self.chat.work(preData, websocket, sockets)
         elif robotId == 2:
             self.chat = WebSearchService()
