@@ -84,5 +84,4 @@ class CodeChat:
         ):
             yield chunk.content
             response += chunk.content
-        self.chat_history.append(HumanMessage(content=question))
-        self.chat_history.append(AIMessage(content=response))
+        self.add_to_chat_history(question, response)

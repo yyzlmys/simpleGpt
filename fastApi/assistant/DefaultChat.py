@@ -6,10 +6,11 @@ from Utils.modelchoice import (
 )
 
 class DefaultChat:
-    def __init__(self, history: list[str]):
+    def __init__(self, history: list[str], max_history_pairs = 5):
         os_setenv()
         self.chat_model = get_zhipu_chat_model()
         self.chat_history = []
+        self.max_history_pairs = max_history_pairs
         self.load_memory(history)
         self.prompt = None
         self.init_prompt()
@@ -40,10 +41,19 @@ class DefaultChat:
             if i + 1 < len(history):
                 human_message = history[i]
                 ai_message = history[i + 1]
-                self.chat_history.append(HumanMessage(content=human_message))
-                self.chat_history.append(AIMessage(content=ai_message))
+                self.add_to_chat_history(human_message, ai_message)
             else:
-                self.chat_history.append(HumanMessage(content=history[i]))
+                self.add_to_chat_history(history[i], None)
+
+    def add_to_chat_history(self, human_message: str, ai_message: str | None):
+        self.chat_history.append(HumanMessage(content=human_message))
+        if ai_message:
+            self.chat_history.append(AIMessage(content=ai_message))
+
+        while len(self.chat_history) > self.max_history_pairs * 2:
+            self.chat_history.pop(0)
+            if len(self.chat_history) > 0:
+                self.chat_history.pop(0)
 
     async def get_answer(self, question: str):
         response: str = ''
@@ -55,5 +65,4 @@ class DefaultChat:
         ):
             yield chunk.content
             response += chunk.content
-        self.chat_history.append(HumanMessage(content=question))
-        self.chat_history.append(AIMessage(content=response))
+        self.add_to_chat_history(question, response)
