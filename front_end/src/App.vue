@@ -13,6 +13,7 @@
               <router-link to="/chat" exact class="nav-item" active-class="active-link">首页</router-link>
               <router-link to="/knowledgebase" class="nav-item" active-class="active-link">知识库</router-link>
               <router-link to="/personal" class="nav-item" active-class="active-link">个人中心</router-link>
+              <router-link to="/robot" class="nav-item" active-class="active-link">Robot</router-link>
             </div>
           </el-col>
           <el-col :span="4" :offset="4">
@@ -52,6 +53,7 @@ export default {
     this.init();
   },
 
+  
   data() {
     return {
       isLogin: false,
