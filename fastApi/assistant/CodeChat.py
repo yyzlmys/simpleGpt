@@ -2,12 +2,12 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
 
 from Utils.modelchoice import (
-    get_zhipu_chat_model
+    get_openai_chat_model
 )
 
 class CodeChat:
     def __init__(self, history: list[str]):
-        self.chat_model = get_zhipu_chat_model()
+        self.chat_model = get_openai_chat_model()
         self.chat_history = []
         self.max_history_pairs = 3
         self.load_memory(history)

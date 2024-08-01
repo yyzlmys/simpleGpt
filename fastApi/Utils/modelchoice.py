@@ -1,11 +1,8 @@
-def get_openai_chat_model():
+def get_openai_chat_model(temperature=0.8):
     from langchain_openai import ChatOpenAI
-    # langchain API https://python.langchain.com/v0.2/docs/integrations/chat/openai/
     chat_model_openai = ChatOpenAI(
-        # openai API https://platform.openai.com/docs/models
-        # model="gpt-4o",
-        model="gpt-3.5-turbo",
-        temperature=0.8,
+        model="gpt-4o-mini",
+        temperature=temperature,
         max_tokens=None,
         timeout=None,
         max_retries=2,

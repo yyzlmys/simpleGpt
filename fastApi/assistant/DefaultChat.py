@@ -1,12 +1,12 @@
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
 from Utils.modelchoice import (
-    get_zhipu_chat_model,
+    get_openai_chat_model,
 )
 
 class DefaultChat:
     def __init__(self, history: list[str], max_history_pairs = 5):
-        self.chat_model = get_zhipu_chat_model()
+        self.chat_model = get_openai_chat_model()
         self.chat_history = []
         self.max_history_pairs = max_history_pairs
         self.load_memory(history)
@@ -21,13 +21,20 @@ class DefaultChat:
               You are an intelligent question answering robot, \n
               and when I ask a question, you should think it step by step and answer my question.\n
 
+              If user asks the question about your information, consider whether the following information might help, but don't present it directly to the user.
+              <information>
+              version: 'v1'
+              kernel: 'gpt-4o-mini'
+              development team: '第4组：给钱你就对'
+              </information>
+
               Remember to consider the chat history when formulating your response, and refer to it if relevant to the current question.
 
               Chat History:
               {chat_history}
-              
+
               Please ensure that, the language of your answer should match the language of the question. If the question is in Chinese, respond in Chinese; if the question is in another language, use that language for the description.
-              
+
               Question:{input}
 
             '''
