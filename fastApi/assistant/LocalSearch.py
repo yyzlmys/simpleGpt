@@ -14,7 +14,6 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from Utils.modelchoice import (
-    os_setenv,
     get_zhipu_chat_model
 )
 
@@ -133,7 +132,6 @@ class MyAgentOutputParser(AgentOutputParser):
 
 class LocalSearchChat:
     def __init__(self, history: list[str], embedding_model_dir: str, lib_dir: str):
-        os_setenv()
         self.chat_model = get_zhipu_chat_model()
         self.retrieval = Retrieval(embedding_model_dir, lib_dir)
         self.tools = None

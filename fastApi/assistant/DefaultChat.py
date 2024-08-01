@@ -1,13 +1,11 @@
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
 from Utils.modelchoice import (
-    os_setenv,
     get_zhipu_chat_model,
 )
 
 class DefaultChat:
     def __init__(self, history: list[str], max_history_pairs = 5):
-        os_setenv()
         self.chat_model = get_zhipu_chat_model()
         self.chat_history = []
         self.max_history_pairs = max_history_pairs

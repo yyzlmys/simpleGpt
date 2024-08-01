@@ -9,7 +9,6 @@ from langchain_community.utilities import GoogleSerperAPIWrapper
 from typing import Union
 import re
 from Utils.modelchoice import (
-    os_setenv,
     get_zhipu_chat_model,
 )
 
@@ -63,7 +62,6 @@ class MyAgentOutputParser(AgentOutputParser):
 
 class WebSearchChat:
     def __init__(self, history: list[str]):
-        os_setenv()
         self.chat_model = get_zhipu_chat_model()
         self.search_with_references = SearchWithReferences()
         self.tools = None
