@@ -5,6 +5,8 @@ import ListKnowledgeBase from '@/views/KnowledgeBase/ListKnowlwdgeBase.vue'
 import ManageKnowledgeBase from '@/views/KnowledgeBase/ManageKnowledgeBase.vue'
 import Chat from '@/views/Chat/ChatView.vue'
 import Personal from '@/views/Personal/Personal.vue'
+import ChatModelSelection from '@/views/Assistant/ChatModelSelection.vue'
+
 const routes = [
   {
     path: '/',
@@ -39,6 +41,11 @@ const routes = [
     path: '/chat',
     name: 'Chat',
     component: Chat
+  },
+  {
+    path: '/robot',
+    name: 'Robot',
+    component: ChatModelSelection
   },
   {
     path: '/:pathMatch(.*)*',
