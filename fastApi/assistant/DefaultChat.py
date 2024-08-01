@@ -28,7 +28,7 @@ class DefaultChat:
               Chat History:
               {chat_history}
               
-              Please ensure that, the descriptive language should match the language of the question. If the question is in Chinese, respond in Chinese; if the question is in another language, use that language for the description.
+              Please ensure that, the language of your answer should match the language of the question. If the question is in Chinese, respond in Chinese; if the question is in another language, use that language for the description.
               
               Question:{input}
 
