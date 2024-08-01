@@ -11,7 +11,7 @@
       <el-main>
         <div class="head-tool">
           <div class="choose-knowledgeBase">
-            <el-select v-model="curKnowledgeBase" :disabled="isSelectDisabled" placeholder="Select" size="large" style="width: 200px">
+            <el-select v-model="curKnowledgeBase" :disabled="isSelectKnowledgeDisabled" placeholder="Select" size="large" style="width: 200px">
               <el-option v-loading="knowledgeBasesLoading"
                 v-for="item in knowledgeBases"
                 :key="item.id"
@@ -25,7 +25,17 @@
               />
             </el-select>
           </div>
-          <div v-if="this.curConversationId!='new'" class="delete-conversation">
+          <div class="choose-robot">
+            <el-select v-model="curRobotId" :disabled="isSelectRobotDisabled" placeholder="Select" size="large" style="width: 200px">
+              <el-option v-loading="robotsLoading"
+                v-for="item in robots"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </div>
+          <div v-show="this.curConversationId!='new'" class="delete-conversation">
             <el-button type="danger" circle @click="handleDeleteConversion()">
               <el-icon><Delete /></el-icon>
             </el-button>
@@ -63,8 +73,9 @@ import ChatWelcome from './ChatWelcome.vue';
 import { api_listChatHistory, api_createConversation, api_deleteConversation, 
   api_listConversations, api_getResponse, api_getConversationName } from '@/api/chat'
 import { api_listKnowledgeBases } from '@/api/knowledgeBase';
-
+import { api_listRobots } from '@/api/robot';
 import { ElMessage, ElMessageBox } from 'element-plus';
+
 export default {
   mounted() {
     this.init();
@@ -75,8 +86,20 @@ export default {
     ChatWelcome
   },
   computed: {
-    isSelectDisabled() {
+    isSelectKnowledgeDisabled() {
+      return (this.curConversationId !== 'new')||(this.curRobotId !== 1);
+    },
+    isSelectRobotDisabled() {
       return this.curConversationId !== 'new';
+    }
+  },
+  watch: {
+    curRobotId(newVal) {
+      console.log('正在监听')
+      if (newVal !== 1) {
+        console.log('我需要变了')
+        this.curKnowledgeBase = 'no';
+      }
     }
   },
   data() {
@@ -86,6 +109,8 @@ export default {
       curConversationId: 'new',
       conversations:[],
       knowledgeBases: [],
+      curRobotId: 1,
+      robots: [],
       curKnowledgeBase: 'no',
       ws: null,
       receivedStr: '',
@@ -93,6 +118,7 @@ export default {
       conversationLoading: false,
       historyLoading: false,
       knowledgeBasesLoading: false,
+      robotsLoading: false,
       isGPTthinking: false,
       isNeedGetName: false,
     };
@@ -106,6 +132,7 @@ export default {
     init() {
       this.listKnowlwdgeBase();
       this.listConversions();
+      this.listRobot();
     },
 
     async listChatHistory(id) {
@@ -168,6 +195,25 @@ export default {
         }
       })
       this.conversationLoading = false;
+    },
+
+    async listRobot() {
+      this.robotsLoading = true;
+      await api_listRobots()
+      .then((response)=>{
+        if(response.data.code == 200)
+        {
+          this.robots = response.data.data;
+        }
+        else if(response.data.code == 201)
+        {
+          ElMessage({
+            message: '网络异常，请刷新!',
+            type: 'error',
+          });
+        }
+      })
+      this.robotsLoading = false;
     },
 
     async getResponse() {
@@ -285,14 +331,16 @@ export default {
       {
         selectedKnowledgeBase = {
           "ifUseLib": 0,
-          "libId": null
+          "libId": null,
+          "robotId": this.curRobotId
         }
       }
       else
       {
         selectedKnowledgeBase = {
           "ifUseLib": 1,
-          "libId": this.curKnowledgeBase
+          "libId": this.curKnowledgeBase,
+          "robotId": this.curRobotId
         }
       }
       await api_createConversation(selectedKnowledgeBase)
@@ -319,6 +367,7 @@ export default {
       }
       this.curConversationId = id;
       this.curKnowledgeBase = this.conversations.find(item => item.id === this.curConversationId).libId;
+      this.curRobotId = this.conversations.find(item => item.id === this.curConversationId).robotId;
     },
 
     handleDeleteConversion() {
@@ -392,10 +441,6 @@ export default {
     height: 100%;
   }
   
-  .el-aside {
-    /* background: gray; */
-  }
-  
   .el-main {
     flex: 1;
   }
@@ -433,14 +478,14 @@ export default {
     display: flex;
     align-items: center;
   }
-  
-  .head-tool .choose-knowledgeBase {
-    flex: 1;
-    margin-right: 10px;
+
+  .head-tool .choose-knowledgeBase,
+  .head-tool .choose-robot {
+    margin-right: 30px;
   }
-  
+
   .head-tool .delete-conversation {
-    margin-left: 10px;
+    margin-left: auto;
     flex-shrink: 0;
   }
   </style>
