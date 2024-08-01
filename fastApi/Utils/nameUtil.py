@@ -2,7 +2,7 @@ from typing import List, Dict
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate, SystemMessagePromptTemplate, \
     HumanMessagePromptTemplate, ChatPromptTemplate
-from modelchoice import (
+from .modelchoice import (
     get_spark_chat_model,
     get_zhipu_chat_model,
     get_openai_chat_model,
@@ -76,7 +76,7 @@ class TitleSummaryChat:
 class NameUtil:
     @classmethod
     def summary(cls, message1, message2):
-        title_summary_chat = TitleSummaryChat(get_zhipu_chat_model(), '/root/fastApi/examples.json')
+        title_summary_chat = TitleSummaryChat(get_zhipu_chat_model(), '/root/fastApi/Utils/examples.json')
         return title_summary_chat.get_result_by_prompt(message1, message2)
 
 

@@ -1,7 +1,5 @@
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
-import sys
-sys.path.append('/root/fastApi')
 
 from Utils.modelchoice import (
     get_zhipu_chat_model

@@ -2,8 +2,6 @@ import asyncio
 import json
 import requests
 from fastapi import WebSocketDisconnect
-import sys
-sys.path.append('/root/fastApi')
 from Utils.nameUtil import NameUtil
 from assistant.TemplateChat import TemplateChat
 

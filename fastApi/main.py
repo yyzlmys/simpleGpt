@@ -1,7 +1,5 @@
 from fastapi import FastAPI, WebSocket
 import uvicorn
-import sys
-sys.path.append('/root/fastApi')
 from service.service import Service
 from dotenv import load_dotenv
 

@@ -1,13 +1,11 @@
 import asyncio
 import json
-import sys
-sys.path.append('/root/fastApi')
 from Utils.hashmap import AsyncDict
-from webSearchService import WebSearchService
-from localSearchService import LocalSearchService
-from defaultChatService import DefaultChatService
-from codeChatService import CodeChatService
-from TemplateChatService import TemplateChatService
+from .webSearchService import WebSearchService
+from .localSearchService import LocalSearchService
+from .defaultChatService import DefaultChatService
+from .codeChatService import CodeChatService
+from .TemplateChatService import TemplateChatService
 
 sockets = AsyncDict()
 
