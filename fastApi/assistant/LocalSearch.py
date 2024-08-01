@@ -12,6 +12,8 @@ from typing import Union
 import re
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import sys
+sys.path.append('/root/fastApi')
 
 from Utils.modelchoice import (
     get_zhipu_chat_model

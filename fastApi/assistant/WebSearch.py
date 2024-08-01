@@ -8,6 +8,8 @@ from langchain_core.tools import Tool
 from langchain_community.utilities import GoogleSerperAPIWrapper
 from typing import Union
 import re
+import sys
+sys.path.append('/root/fastApi')
 from Utils.modelchoice import (
     get_zhipu_chat_model,
 )

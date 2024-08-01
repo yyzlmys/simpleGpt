@@ -1,5 +1,7 @@
 import asyncio
 import json
+import sys
+sys.path.append('/root/fastApi')
 from Utils.hashmap import AsyncDict
 from webSearchService import WebSearchService
 from localSearchService import LocalSearchService

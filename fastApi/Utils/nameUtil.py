@@ -3,7 +3,6 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate, SystemMessagePromptTemplate, \
     HumanMessagePromptTemplate, ChatPromptTemplate
 from modelchoice import (
-    os_setenv,
     get_spark_chat_model,
     get_zhipu_chat_model,
     get_openai_chat_model,
@@ -12,7 +11,6 @@ from modelchoice import (
 )
 import json
 
-os_setenv()
 class TitleSummaryChat:
     def __init__(self, chat_model: BaseChatModel, examples_dir: str):
         self.chat_model = chat_model
