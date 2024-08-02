@@ -9,5 +9,4 @@ public class Message
     private Integer conversationId;
     private Integer isPerson;
     private String content;
-    private String date;
 }

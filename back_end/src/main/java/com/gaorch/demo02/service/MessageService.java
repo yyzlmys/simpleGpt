@@ -1,12 +1,11 @@
 package com.gaorch.demo02.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gaorch.demo02.entity.Conversation;
-import com.gaorch.demo02.entity.Lib;
-import com.gaorch.demo02.entity.Message;
+import com.gaorch.demo02.entity.*;
 import com.gaorch.demo02.mapper.ConversationMapper;
 import com.gaorch.demo02.mapper.LibMapper;
 import com.gaorch.demo02.mapper.MessageMapper;
+import com.gaorch.demo02.mapper.RobotMapper;
 import com.gaorch.demo02.utils.Result;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
@@ -42,6 +41,9 @@ public class MessageService
     @Autowired
     private LibMapper libMapper;
 
+    @Autowired
+    private RobotMapper robotMapper;
+
     public Result insert(Message message)
     {
         message.setId(0);
@@ -75,38 +77,37 @@ public class MessageService
     /**
      * 发送消息到对应的 WebSocket 连接
      */
-    @Data
-    private class MessageDTO
-    {
-        private Integer libId;
-        private String name;
-        private String description;
-        private Message message;
-        private List<Message> lastMessages;
-        private Integer isFirst = 0;
-    }
 
     public Result sendMessage(Message message) throws IOException {
         Integer conversationId = message.getConversationId();
-        MessageDTO messageDTO = new MessageDTO();
-        messageDTO.setMessage(message);
-
         WebSocketSession session = sessions.get(conversationId);
         if (session == null) {
             // 如果没有现有的 session，创建一个新的
             session = createWebSocketSession(conversationId);
             sessions.put(conversationId, session);
+
+            List<Message> messages = messageMapper.selectLastMessagesByConversationId(conversationId, 10);
             Conversation conversation = conversationMapper.selectById(conversationId);
+            Robot robot = robotMapper.selectById(conversation.getRobotId());
+
+            PreData preData = new PreData();
+
+            preData.setLastMessages(messages);
+            preData.setRobotId(robot.getId());
+            preData.setPrompt(robot.getPrompt());
+
             if(conversation.getIfUseLib() == 1)
             {
-                messageDTO.setLibId(conversation.getLibId());
+                preData.setLibId(conversation.getLibId());
                 Lib lib = libMapper.selectById(conversation.getLibId());
-                messageDTO.setName(lib.getName());
-                messageDTO.setDescription(lib.getDescription());
+                preData.setName(lib.getName());
+                preData.setDescription(lib.getDescription());
             }
-            List<Message> messages = messageMapper.selectLastMessagesByConversationId(conversationId, 10);
-            messageDTO.setLastMessages(messages);
-            messageDTO.setIsFirst(1);
+
+            // 发送前置消息
+            ObjectMapper objectMapper = new ObjectMapper();
+            String preJson = objectMapper.writeValueAsString(preData);
+            session.sendMessage(new TextMessage(preJson));
         }
 
         message.setIsPerson(1);
@@ -114,8 +115,9 @@ public class MessageService
 
         // 发送消息
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(messageDTO);
+        String json = objectMapper.writeValueAsString(message);
         session.sendMessage(new TextMessage(json));
+
         // 更新最后一次收到消息的时间
         lastMessageTime.put(conversationId, System.currentTimeMillis());
 
@@ -142,6 +144,7 @@ public class MessageService
                     reply.setContent(answer);
                     reply.setConversationId(conversationId);
                     messageMapper.insert(reply);
+                    conversationMapper.updateDate(conversationId);
                 }
 
                 @Override

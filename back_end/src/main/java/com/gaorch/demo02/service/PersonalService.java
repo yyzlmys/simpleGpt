@@ -3,6 +3,7 @@ package com.gaorch.demo02.service;
 import com.gaorch.demo02.entity.Lib;
 import com.gaorch.demo02.entity.User;
 import com.gaorch.demo02.mapper.LibMapper;
+import com.gaorch.demo02.mapper.RobotMapper;
 import com.gaorch.demo02.mapper.UserMapper;
 import com.gaorch.demo02.utils.JwtUtils;
 import com.gaorch.demo02.utils.PasswordUtils;
@@ -27,6 +28,9 @@ public class PersonalService
 
     @Autowired
     private LibService libService;
+
+    @Autowired
+    private RobotMapper robotMapper;
 
     public Result getInfo()
     {
@@ -59,6 +63,7 @@ public class PersonalService
         userMapper.deleteById(id);
         libService.deleteByUserId(id);
         conversationService.deleteByUserId(id);
+        robotMapper.deleteByUserId(id);
         return Result.ok();
     }
 

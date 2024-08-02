@@ -10,7 +10,6 @@ public class Conversation
     private String name;
     private Integer ifUseLib;
     private Integer LibId;
-    private String date;
-
+    private Integer robotId;
     private Message lastMessage;
 }

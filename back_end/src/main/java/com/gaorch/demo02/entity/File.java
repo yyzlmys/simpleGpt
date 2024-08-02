@@ -13,6 +13,5 @@ public class File
     private MultipartFile file;
     private String fileName;
     private double size;
-    private String date;
     private String type;
 }
