@@ -1,4 +1,5 @@
 from collections import deque
+from datetime import datetime
 from langchain.agents import create_react_agent, AgentExecutor, AgentOutputParser
 from langchain.memory import ConversationBufferMemory
 from langchain_core.agents import AgentAction, AgentFinish
@@ -11,6 +12,7 @@ import re
 from Utils.modelchoice import (
     get_openai_chat_model,
 )
+
 
 class SearchWithReferences:
     def __init__(self):
@@ -57,7 +59,13 @@ class MyAgentOutputParser(AgentOutputParser):
             action_input = match.group(2).strip()
             return AgentAction(tool=action, tool_input=action_input, log=llm_output)
 
-        raise ValueError(f"Could not parse LLM output: `{llm_output}`")
+        else:
+            return AgentFinish(
+                return_values={"output": llm_output},
+                log=llm_output,
+            )
+
+        # raise ValueError(f"Could not parse LLM output: `{llm_output}`")
 
 
 class WebSearchChat:
@@ -78,46 +86,77 @@ class WebSearchChat:
         self.init_agent_executor()
 
     def init_tools(self):
+
+        def get_current_time_formatted(input: Any):
+                return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        repl_tool = Tool(
+            name="curTime",
+            description="Useful for when you need to know current time."
+                        "you should have no input to this tool",
+            func=get_current_time_formatted,
+        )
         tool = Tool(
             name='WebSearch',
-            description='Useful for when you need to answer questions about current events or current time. '
+            description='Useful for when you need to answer questions about Web information. '
                         'You should ask targeted questions',
             func=self.search_with_references.search_with_refs
         )
-        self.tools = [tool]
+        self.tools = [repl_tool, tool]
 
     def init_agent_prompt(self):
         prompt_template_str: str = '''
+        
+              You are an intelligent question answering robot,
+              and you can use the following tools if you think it is useful.\n
+    
+              {tools}
 
-                  You are an intelligent question answering robot, \n
-                  and when I ask a question, you can use the following tools if you think it is useful.\n
+              Remember to consider the chat history when formulating your response, and refer to it if relevant to the current question.
 
-                  {tools}
+              Chat History:
+              {chat_history}
 
-                  Remember to consider the chat history when formulating your response, and refer to it if relevant to the current question.
+              You should always use the tool if you think it is necessary.\n
+              To use a tool, please use the following format:\n
+              
+              Thought: Now, I need to know [current question], Do I need to use a tool? Yes\n
+              Action: the action to take, should be one of [{tool_names}]\n
+              Action Input: the input to the action\n
+              Observation: the result of the action\n
+              ... (this Thought/Action/Action Input/Observation can repeat N times)
+              
 
-                  Chat History:
-                  {chat_history}
+              if you do not need to use a tool, you MUST use the format:\n
 
-                  You should always use the tool if you think it is necessary.\n
-                  To use a tool, please use the following format:\n
+              Thought: Now, I know the final answer, I can give the following answer:\n
+              AI: [your response here]\n
 
-                  Thought: Do I need to use a tool? Yes\n
-                  Action: the action to take, should be one of [{tool_names}]\n
-                  Action Input: the input to the action\n
-                  Observation: the result of the action\n
+              If you think the Observation of the tool may be confusing or incorrect, 
+              please choose a different Action Input, and call the tool again, but just one times to repeat it.
+              Important: If the user questions or challenges any information from the chat history, you should thoroughly reconsider your approach. This may involve using tools again to solve the problem, even if you've used them before. Always prioritize providing the most accurate and up-to-date information.
+              Please ensure that, the language of your answer should match the language of the question. If the question is in Chinese, respond in Chinese; if the question is in another language, use that language for the description.
+              
+              <example>
+              Question: 历史上的今天是什么日子？
+              Thought: Now, I need to know '今天的日期', Do I need to use a tool? Yes\n
+              Action: curTime
+              Action Input: time
+              Observation: 2024-01-01 10:00:00
+              Thought: Now, I need to know '1月1号在历史上发生了什么', Do I need to use a tool? Yes
+              Action: WebSearch
+              Action Input: 1月1号在历史上发生了什么
+              Observation: 1929年：国民革命军编遣会议召开。 1933年：中国驻檀香山领事馆落成。
+              Thought: Now, I know the final answer, I can give the following answer:
+              AI: 今天是2000年1月1号，历史上的今天发生了如下事件：
+                   - 1929年：国民革命军编遣会议召开。
+                   - 1933年：中国驻檀香山领事馆落成。
+              </example>
+              
+              Begin!
 
-                  if you do not need to use a tool, you MUST use the format:\n
-
-                  Thought: Do I need to use a tool? No\n
-                  AI: [your response here]\n
-
-                  Important: If the user questions or challenges any information from the chat history, you should thoroughly reconsider your approach. This may involve using tools again to solve the problem, even if you've used them before. Always prioritize providing the most accurate and up-to-date information.
-
-                  Begin!
-
-                  Question: {input}
-                  {agent_scratchpad}
+              Question: {input}
+              {agent_scratchpad}
 
         '''
         self.agent_prompt = PromptTemplate.from_template(prompt_template_str)
@@ -145,7 +184,7 @@ class WebSearchChat:
             agent=self.agent,
             tools=self.tools,
             memory=self.memory,
-            verbose=False,
+            verbose=True,
             max_iterations=5,
             handle_parsing_errors=True
         )
@@ -154,8 +193,8 @@ class WebSearchChat:
         ai_response_started = False
         window = deque(maxlen=4)
         async for event in self.agent_executor.astream_events(
-            input={'input': question},
-            version="v2",
+                input={'input': question},
+                version="v2",
         ):
             kind = event["event"]
 
@@ -173,10 +212,5 @@ class WebSearchChat:
                     else:
                         yield content
 
-
-        # Get references
         references = self.search_with_references.get_format_references()
         yield references
-
-
-
