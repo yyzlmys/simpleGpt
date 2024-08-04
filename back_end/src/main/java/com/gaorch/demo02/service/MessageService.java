@@ -10,6 +10,7 @@ import com.gaorch.demo02.utils.Result;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -44,17 +45,20 @@ public class MessageService
     @Autowired
     private RobotMapper robotMapper;
 
-    public Result insert(Message message)
-    {
-        message.setId(0);
-        messageMapper.insert(message);
-        return Result.ok();
-    }
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     public Result list(Integer conversationId)
     {
-        List<Message> messages = messageMapper.selectByConversationId(conversationId);
-        return Result.ok(messages);
+        // 从Redis缓存中获取消息
+        List<Object> messages = redisTemplate.opsForList().range(conversationId.toString(), 0, -1);
+        if (messages != null && !messages.isEmpty()) {
+            System.out.println("调用redis");
+            return Result.ok(messages);
+        }
+
+        List<Message> messagess = messageMapper.selectByConversationId(conversationId);
+        return Result.ok(messagess);
     }
 
     // 存储 WebSocketSession 对象的映射，键是 conversationId
@@ -81,13 +85,13 @@ public class MessageService
     public Result sendMessage(Message message) throws IOException {
         Integer conversationId = message.getConversationId();
         WebSocketSession session = sessions.get(conversationId);
+        Conversation conversation = conversationMapper.selectById(conversationId);
         if (session == null) {
             // 如果没有现有的 session，创建一个新的
             session = createWebSocketSession(conversationId);
             sessions.put(conversationId, session);
 
             List<Message> messages = messageMapper.selectLastMessagesByConversationId(conversationId, 10);
-            Conversation conversation = conversationMapper.selectById(conversationId);
             Robot robot = robotMapper.selectById(conversation.getRobotId());
 
             PreData preData = new PreData();
@@ -112,6 +116,10 @@ public class MessageService
 
         message.setIsPerson(1);
         messageMapper.insert(message);
+
+        String key = conversationId.toString();
+        redisTemplate.opsForList().rightPush(key, message);
+        redisTemplate.expire(key, 1, TimeUnit.DAYS);  // 设置过期时间为1天
 
         // 发送消息
         ObjectMapper objectMapper = new ObjectMapper();
@@ -143,7 +151,13 @@ public class MessageService
                     reply.setIsPerson(0);
                     reply.setContent(answer);
                     reply.setConversationId(conversationId);
+
                     messageMapper.insert(reply);
+
+                    String key = conversationId.toString();
+                    redisTemplate.opsForList().rightPush(key, reply);
+                    redisTemplate.expire(key, 1, TimeUnit.DAYS);  // 设置过期时间为1天
+
                     conversationMapper.updateDate(conversationId);
                 }
 
