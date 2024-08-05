@@ -41,7 +41,23 @@ public class ConversationService
     {
         Integer userId = JwtUtils.getId(request);
         conversation.setUserId(userId);
-        conversation.setName("新建会话");
+        if (conversation.getRobotId() == 4)
+        {
+            conversation.setName("视频总结");
+        }
+        else if (conversation.getRobotId() == 5)
+        {
+            conversation.setName("网页总结");
+        }
+        else if (conversation.getRobotId() == 6)
+        {
+            conversation.setName("文档总结");
+        }
+        else
+        {
+            conversation.setName("新建会话");
+        }
+
         conversation.setId(0);
         conversationMapper.insert(conversation);
         return Result.ok(conversation.getId());

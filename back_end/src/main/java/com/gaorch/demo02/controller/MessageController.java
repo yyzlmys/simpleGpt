@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.IOException;
 
@@ -28,6 +29,21 @@ public class MessageController
     @PostMapping("/ask")
     public Result ask(@RequestBody Message message) throws IOException {
         return messageService.sendMessage(message);
+    }
+
+    @PostMapping("/vedio")
+    public Result vedio(@RequestBody Message message) throws IOException {
+        return messageService.vedio(message);
+    }
+
+    @PostMapping("/web")
+    public Result web(@RequestBody Message message) throws IOException {
+        return messageService.web(message);
+    }
+
+    @PostMapping("/file")
+    public Result file(MultipartHttpServletRequest request) throws IOException {
+        return messageService.file(request);
     }
 }
 

@@ -40,6 +40,12 @@ public class RobotService
         List<Robot> robots = robotMapper.selectByUserId(userId);
         return Result.ok(robots);
     }
+
+    public Result get(Integer id)
+    {
+        Robot robot = robotMapper.selectById(id);
+        return Result.ok(robot);
+    }
 }
 
 

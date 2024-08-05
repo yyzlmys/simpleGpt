@@ -30,4 +30,10 @@ public class RobotController
     {
         return robotService.list();
     }
+
+    @GetMapping("/{id}")
+    public Result get(@PathVariable Integer id)
+    {
+        return robotService.get(id);
+    }
 }
