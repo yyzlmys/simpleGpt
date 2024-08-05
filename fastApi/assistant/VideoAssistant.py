@@ -10,6 +10,10 @@ from Util.modelchoise import (
 )
 
 class VideoAssistant:
+    """
+    This class can process the video information, which is actually to extract video subtitles as context for the llm.
+    Important: Because the window token limit, this class can't use the free 'gpt-4o-mini'(only have 4K), we recommend to use zhipuai(have 128K).
+    """
     def __init__(self, history: list[str]):
         self.chat_model = get_zhipu_chat_model()
         self.chat_history = []
