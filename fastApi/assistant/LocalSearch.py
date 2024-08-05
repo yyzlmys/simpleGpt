@@ -101,7 +101,7 @@ class Retrieval:
         for doc in references:
             source = doc.metadata['source'].split('_', 1)[-1]
             content = doc.page_content
-            self.last_docs += f" - **{source}:**<br>`{content}`"
+            self.last_docs += f" - **{source}:**  \n`{content}`"
 
     def is_have_references(self):
         return self.last_docs is not None
