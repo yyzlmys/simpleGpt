@@ -6,9 +6,9 @@ from Util.modelchoise import (
     get_openai_chat_model
 )
 class TextReader:
-    '''
+    """
     This class can process super long information, but it is also spend many tokens.
-    '''
+    """
     def __init__(self):
         self.chat_model = get_openai_chat_model(temperature=0)
         self.summarize_chain = None
