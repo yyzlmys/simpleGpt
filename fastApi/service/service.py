@@ -5,7 +5,10 @@ from .webSearchService import WebSearchService
 from .localSearchService import LocalSearchService
 from .defaultChatService import DefaultChatService
 from .codeChatService import CodeChatService
-from .TemplateChatService import TemplateChatService
+from .templateChatService import TemplateChatService
+from .vedioChatService import VedioChatService
+from .webPageChatService import WebPageChatService
+from .fileChatService import FileChatService
 
 sockets = AsyncDict()
 
@@ -35,6 +38,12 @@ class Service:
             self.chat = WebSearchService()
         elif robotId == 3:
             self.chat = CodeChatService()
+        elif robotId == 4:
+            self.chat = VedioChatService()
+        elif robotId == 5:
+            self.chat = WebPageChatService()
+        elif robotId == 6:
+            self.chat = FileChatService()
         else:
             self.chat = TemplateChatService()
 
