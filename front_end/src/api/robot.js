@@ -8,6 +8,7 @@ export function api_listRobots() {
   })
 }
 
+// create robot
 export function api_create_robot(data) {
   return request({
     url: `/robot`,
@@ -16,6 +17,7 @@ export function api_create_robot(data) {
   })
 }
 
+// delete robot
 export function api_delete_robot(id) {
     return request({
       url: `/robot/${id}`,

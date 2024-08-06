@@ -1,6 +1,6 @@
 import request from "@/utils/request"
 
-
+// list conversation
 export function api_listConversations() {
   return request({
     url: `/conversation/list`,
@@ -33,6 +33,14 @@ export function api_listChatHistory(conversationId) {
   })
 }
 
+// get conversation name
+export function api_getConversationName(id) {
+  return request({
+    url: `/conversation/name/${id}`,
+    method: 'get',
+  })
+}
+
 // get response
 export function api_getResponse(data) {
   return request({
@@ -42,10 +50,36 @@ export function api_getResponse(data) {
   })
 }
 
-// get conversation
-export function api_getConversationName(id) {
+// 上传文件
+export function api_getFileResponse(file, question, conversationId) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('question', question)
+  formData.append('conversationId', conversationId)
   return request({
-    url: `/conversation/name/${id}`,
-    method: 'get',
+    url: `/message/file`,
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 视频机器人回答
+export function api_getVideoResponse(data) {
+  return request({
+    url: `/message/vedio`,
+    method: 'post',
+    data
+  })
+}
+
+// 网页机器人回答
+export function api_getWebPageResponse(data) {
+  return request({
+    url: `/message/web`,
+    method: 'post',
+    data
   })
 }

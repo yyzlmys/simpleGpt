@@ -35,6 +35,10 @@
               />
             </el-select>
           </div>
+          <div class="prompt-text">
+            <span class="prompt-icon">💡</span>
+            <span class="prompt-content">{{ userTip }}</span>
+          </div>
           <div v-show="this.curConversationId!='new'" class="delete-conversation">
             <el-button type="danger" circle @click="handleDeleteConversion()">
               <el-icon><Delete /></el-icon>
@@ -49,6 +53,18 @@
             <div v-else>
               <ChatWelcome />
             </div>
+          </div>
+          <div v-if="showUploadFile" class="left-component">
+            <div class="file-upload">
+              <label for="file-upload" class="custom-file-upload">
+                选择文件
+              </label>
+              <input type="file" id="file-upload" @change="handleFileChange" />
+              <span class="file-name" v-if="selectedFile">{{ selectedFile.name }}</span>
+            </div>
+          </div>
+          <div v-if="showEditUrl" class="left-component">
+            WebPage url:<el-input v-model="curWebPageUrl" style="width: 400px"/>
           </div>
           <div class="chat-input">
             <el-input
@@ -70,8 +86,16 @@
 import ChatHistory from './ChatHistory.vue';
 import ChatConversation from './ChatConversation.vue';
 import ChatWelcome from './ChatWelcome.vue';
-import { api_listChatHistory, api_createConversation, api_deleteConversation, 
-  api_listConversations, api_getResponse, api_getConversationName } from '@/api/chat'
+import { api_listChatHistory, 
+  api_createConversation, 
+  api_deleteConversation, 
+  api_listConversations, 
+  api_getResponse, 
+  api_getConversationName, 
+  api_getFileResponse, 
+  api_getVideoResponse, 
+  api_getWebPageResponse 
+} from '@/api/chat'
 import { api_listKnowledgeBases } from '@/api/knowledgeBase';
 import { api_listRobots } from '@/api/robot';
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -91,13 +115,20 @@ export default {
     },
     isSelectRobotDisabled() {
       return this.curConversationId !== 'new';
+    },
+    userTip() {
+      return this.userTips[this.curRobotId] || '这是你的自定义机器人';
+    },
+    showUploadFile() {
+      return this.curRobotId == 6;
+    },
+    showEditUrl() {
+      return this.curRobotId == 5;
     }
   },
   watch: {
     curRobotId(newVal) {
-      console.log('正在监听')
       if (newVal !== 1) {
-        console.log('我需要变了')
         this.curKnowledgeBase = 'no';
       }
     }
@@ -121,6 +152,16 @@ export default {
       robotsLoading: false,
       isGPTthinking: false,
       isNeedGetName: false,
+      userTips: {
+        '1': '可以选择知识库，也可以不选择知识库',
+        '2': '该机器人可以搜索网络信息进行回答',
+        '3': '该机器人擅长编程',
+        '4': '该机器人首条消息必须是单一Bilibili视频链接',
+        '5': '该机器人每条消息，必须附带网页链接',
+        '6': '该机器人每条消息，必须附带文件',
+      },
+      curWebPageUrl: '',
+      selectedFile: null,
     };
   },
   beforeDestroy() {
@@ -235,22 +276,73 @@ export default {
         }
         // 建立 websocket 
         this.initWebsocket('ws://firstdraft.cn:8080/get');
-        const curForm = {
-          "conversationId": this.curConversationId,
-          "content": this.inputString
+        // console.log(this.curRobotId)
+        if(this.curRobotId == 4)
+        {
+          const curForm = {
+            "conversationId": this.curConversationId,
+            "content": this.inputString
+          }
+          api_getVideoResponse(curForm)
+          .then((response)=>{
+            if(response.data.code == 200) {
+              this.isGPTthinking = true;
+            }
+            else {
+              ElMessage({
+                message: '网络异常，请重试！',
+                type: 'error',
+              }) 
+            }
+          });
+        } else if(this.curRobotId == 5) {
+          const curForm = {
+            "conversationId": this.curConversationId,
+            "content": this.curWebPageUrl + '\n' + this.inputString
+          }
+          api_getWebPageResponse(curForm)
+          .then((response)=>{
+            if(response.data.code == 200) {
+              this.isGPTthinking = true;
+            }
+            else {
+              ElMessage({
+                message: '网络异常，请重试！',
+                type: 'error',
+              }) 
+            }
+          });
+        } else if(this.curRobotId == 6) {
+          api_getFileResponse(this.selectedFile, this.inputString, this.curConversationId)
+          .then((response)=>{
+            if(response.data.code == 200) {
+              this.isGPTthinking = true;
+            }
+            else {
+              ElMessage({
+                message: '网络异常，请重试！',
+                type: 'error',
+              }) 
+            }
+          });
+        } else {
+          const curForm = {
+            "conversationId": this.curConversationId,
+            "content": this.inputString
+          }
+          api_getResponse(curForm)
+          .then((response)=>{
+            if(response.data.code == 200) {
+              this.isGPTthinking = true;
+            }
+            else {
+              ElMessage({
+                message: '网络异常，请重试！',
+                type: 'error',
+              }) 
+            }
+          });
         }
-        api_getResponse(curForm)
-        .then((response)=>{
-          if(response.data.code == 200) {
-            this.isGPTthinking = true;
-          }
-          else {
-            ElMessage({
-              message: '网络异常，请重试！',
-              type: 'error',
-            }) 
-          }
-        });
         const curHumanMessage = {
           isPerson: true,
           content: this.inputString,
@@ -406,7 +498,11 @@ export default {
             message: '取消删除',
           })
         })
-    }
+    },
+
+    handleFileChange(event) {
+      this.selectedFile = event.target.files[0];
+    },
 
   }
 }
@@ -452,26 +548,62 @@ export default {
     flex-direction: column;
     height: 94%;
   }
-  
+
   .chat-history {
     flex: 1;
     overflow-y: auto;
   }
-  
+
   .chat-input {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     margin-top: 10px;
   }
-  
+
+  .chat-input .left-component {
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
   .chat-input .el-input {
     flex: 1;
     margin-right: 10px;
   }
-  
+
   .chat-input .el-button {
     margin-left: 10px;
     flex-shrink: 0;
+  }
+
+  .file-upload {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+  }
+
+  .custom-file-upload {
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #409EFF;
+    color: white;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+
+  .custom-file-upload:hover {
+    background-color: #66b1ff;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .file-name {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
   }
 
   .head-tool {
@@ -484,9 +616,22 @@ export default {
     margin-right: 30px;
   }
 
+  .head-tool .prompt-text {
+    display: flex;
+    align-items: center;
+    margin-left: 70px;
+    font-size: 14px;
+    color: #606266;
+  }
+
+  .head-tool .prompt-icon {
+    margin-right: 8px;
+    font-size: 18px;
+    color: #409EFF;
+  }
+
   .head-tool .delete-conversation {
     margin-left: auto;
-    flex-shrink: 0;
   }
   </style>
   
