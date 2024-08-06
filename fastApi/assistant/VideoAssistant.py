@@ -2,9 +2,8 @@ from langchain_community.document_loaders import BiliBiliLoader, YoutubeLoader
 from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import PromptTemplate
-from youtube_transcript_api import NoTranscriptFound, YouTubeTranscriptApi
-
-from Util.modelchoise import (
+import traceback
+from Utils.modelchoice import (
     get_openai_chat_model,
     get_zhipu_chat_model
 )
@@ -69,11 +68,12 @@ class VideoAssistant:
             if len(self.chat_history) > 0:
                 self.chat_history.pop(0)
 
-    def init_bilibili_video(self, video_url: str):
-        SESSDATA = "0f00c213%2C1738140166%2C91131%2A82CjB8XCHcEOkK8gP1OeojgdJJGbhI-MipkVOoKvKSAiMXSpUbJZkSSnysQ4V6QsBRI6wSVlJzX0pxLUZieHhwQlNNNmdlZ1QyRndqSFNaTUFBZGZaRTI2MWhGMkNlaHlrZE90UmxWaTY2d2ZxWm9nVXZSX1RocnZDdS1yU0hFd1R1MldCUUpteVpnIIEC"
-        BUVID3 = "E560893E-C386-0454-4C9A-82221C7175CA65691infoc"
-        BILI_JCT = "1efb137e133084406ea4e6c1c6d49320"
+    async def init_bilibili_video(self, video_url: str):
+        SESSDATA = "7751fcc7%2C1738489553%2C0e391%2A81CjATlMYc6R7bheLsKJdE4BUApD8NQrRBdq38ezhaYMjPp7ECI8QzZkbzvpj0XQsBUOsSVjRwSGtFNmdxNnN4ZUZsQ0xMbkZvZEstUV9zTktFVWpsWUozOWI5cWppVlRfMzNLQTZVV2wzR1BzUXU2bDZFbUw0SWN5ckNBQ2xwOFVkdVZMQmQ3Qm9nIIEC"
+        BUVID3 = "26C32D09-F981-621B-E9CC-8E52F26B8BD499104infoc"
+        BILI_JCT = "9b87e54f3d6b3939f1717974b1228b2c"
         try:
+
             loader = BiliBiliLoader(
                 [
                     video_url,
@@ -82,11 +82,14 @@ class VideoAssistant:
                 bili_jct=BILI_JCT,
                 buvid3=BUVID3,
             )
-            docs = loader.load()
+            # 尝试获取字幕信息
+            docs = await loader.load()
             if not docs[0].page_content == '':
                 self.subtitle = docs[0].page_content
         except Exception as e:
             self.subtitle = None
+            print(f"An error occurred: {e}", flush=True)
+            print(traceback.format_exc(), flush=True)
 
     def init_youtube_video(self, video_url: str):
         try:

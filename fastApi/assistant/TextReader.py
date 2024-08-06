@@ -2,7 +2,7 @@ from langchain.chains.summarize import load_summarize_chain
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
 from langchain.text_splitter import TokenTextSplitter
-from Util.modelchoise import (
+from Utils.modelchoice import (
     get_openai_chat_model,
     get_zhipu_chat_model
 )
