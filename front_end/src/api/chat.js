@@ -1,7 +1,6 @@
 import request from "@/utils/request"
 
 
-// list chatConversation
 export function api_listConversations() {
   return request({
     url: `/conversation/list`,

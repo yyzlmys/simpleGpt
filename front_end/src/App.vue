@@ -12,19 +12,29 @@
             <div class="nav-links">
               <router-link to="/chat" exact class="nav-item" active-class="active-link">首页</router-link>
               <router-link to="/knowledgebase" class="nav-item" active-class="active-link">知识库</router-link>
-              <router-link to="/personal" class="nav-item" active-class="active-link">个人中心</router-link>
               <router-link to="/robot" class="nav-item" active-class="active-link">Robot</router-link>
+              <router-link to="/guide" class="nav-item" active-class="active-link">使用指南</router-link>
+              <router-link to="/personal" class="nav-item" active-class="active-link">个人中心</router-link>
             </div>
           </el-col>
           <el-col :span="4" :offset="4">
-            <div class="login-area">
-              <template v-if="!isLogin">
-                <button class="btn btn-primary" @click="loginDialogVisible = true">登录</button>
-              </template>
-              <template v-else>
-                <router-link to="/personal" class="username">{{ username }}</router-link>
-              </template>
-            </div>
+            <el-row :gutter="20" style="width: 100%;">
+              <el-col :span="12">
+                <div class="login-area">
+                  <template v-if="!isLogin">
+                    <button class="btn btn-primary" @click="loginDialogVisible = true">登录</button>
+                  </template>
+                  <template v-else>
+                    <router-link to="/personal" class="username">{{ username }}</router-link>
+                  </template>
+                </div>
+              </el-col>
+              <el-col :span="12">
+                <el-button @click="toggleTheme" class="theme-toggle-btn">
+                  {{ isDarkTheme ? '🌙' : '☀️' }}
+                </el-button>
+              </el-col>
+            </el-row>
           </el-col>
         </el-row>
       </el-header>
@@ -44,63 +54,68 @@
 import { getToken } from '@/utils/auth';
 import { api_getInfo } from '@/api/personal';
 import Login from '@/components/Login.vue'
+
 export default {
   name: 'App',
-  components:{
+  components: {
     Login
-    },
+  },
   mounted() {
     this.init();
-  },
 
-  
+    // 读取本地存储的主题设置
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      this.isDarkTheme = true;
+      document.body.classList.add('dark-theme');
+    }
+  },
   data() {
     return {
       isLogin: false,
       username: '',
-      loginDialogVisible: false
+      loginDialogVisible: false,
+      isDarkTheme: false, // 默认浅色主题
     };
   },
-
-  methods:{
-    init()
-    {
+  methods: {
+    init() {
       this.isLogin = false;
-      if(getToken())
-      {
+      if (getToken()) {
         this.isLogin = true;
         this.getInfo();
       }
     },
-
-    getInfo()
-    {
+    getInfo() {
       api_getInfo()
-      .then((response)=>{
-        if(response.data.code == 200)
-        {
-          this.username = response.data.data.username;
-        }
-      })
+        .then((response) => {
+          if (response.data.code == 200) {
+            this.username = response.data.data.username;
+          }
+        })
     },
-
-    handleToLogin()
-    {
+    handleToLogin() {
       this.loginDialogVisible = true;
     },
-
-    handleLogin()
-    {
+    handleLogin() {
       this.loginDialogVisible = false;
       this.init();
       this.$router.push('/chat');
+    },
+    toggleTheme() {
+      this.isDarkTheme = !this.isDarkTheme;
+      if (this.isDarkTheme) {
+        document.body.classList.add('dark-theme');
+      } else {
+        document.body.classList.remove('dark-theme');
+      }
+      localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
     }
   }
 }
 </script>
 
 <style scoped>
-
 .header {
   height: 7vh;
   display: flex;
@@ -122,7 +137,7 @@ export default {
 }
 
 .nav-item {
-  margin-right: 50px; 
+  margin-right: 50px;
   text-decoration: none;
   color: black;
   font-weight: bold;
@@ -178,8 +193,12 @@ export default {
 }
 
 .username {
-  margin-right: 20px; 
+  margin-right: 20px;
   color: black;
   text-decoration: none;
+}
+
+.theme-toggle-btn {
+  margin: 0 10px;
 }
 </style>

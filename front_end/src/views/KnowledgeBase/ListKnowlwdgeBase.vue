@@ -113,6 +113,12 @@
   };
   </script>
   
+  
+  
+  
+  
+  
+  
   <style scoped>
   .knowledge-base-list {
     display: flex;
