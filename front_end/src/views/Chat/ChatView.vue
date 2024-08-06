@@ -72,6 +72,8 @@
               placeholder="给`GPT`发送消息..."
               clearable
               type="textarea"
+              @keydown="handleKeydown"
+              @keyup="handleKeyup"
               :autosize="{ minRows: 2 }"
             ></el-input>
             <el-button type="primary" round :disabled="sendDisabled" @click="getResponse()">发送</el-button>
@@ -103,12 +105,6 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 export default {
   mounted() {
     this.init();
-    // 监听键盘事件
-    window.addEventListener('keyup', this.handleKeyup);
-  },
-  beforeDestroy() {
-    // 清理事件监听器
-    window.removeEventListener('keyup', this.handleKeyup);
   },
   components: {
     ChatHistory,
@@ -378,11 +374,23 @@ export default {
       return new Promise(resolve => setTimeout(resolve, ms));
     },
 
-    handleKeyup(event) {
+    handleKeydown(event) {
       if (event.key === 'Enter' && !event.shiftKey) {
-        this.getResponse();
+        event.preventDefault();
       }
     },
+
+    handleKeyup(event) {
+      if (event.key === 'Enter') {
+        if (event.shiftKey) {
+          return;
+        } else {
+          // 移除可能存在的尾部换行符
+          this.inputString = this.inputString.trim();
+          this.getResponse();
+        }
+      }
+},
 
     initWebsocket(url) {
       if (this.ws) {
