@@ -103,6 +103,12 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 export default {
   mounted() {
     this.init();
+    // 监听键盘事件
+    window.addEventListener('keyup', this.handleKeyup);
+  },
+  beforeDestroy() {
+    // 清理事件监听器
+    window.removeEventListener('keyup', this.handleKeyup);
   },
   components: {
     ChatHistory,
@@ -370,6 +376,12 @@ export default {
 
     async delay(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
+    },
+
+    handleKeyup(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        this.getResponse();
+      }
     },
 
     initWebsocket(url) {
