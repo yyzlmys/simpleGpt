@@ -261,9 +261,19 @@ export default {
       if(this.inputString == '')
       {
         ElMessage({
-            message: '不能发送空消息!',
-            type: 'error',
-          });
+          message: '不能发送空消息!',
+          type: 'error',
+        });
+      } else if(this.curRobotId == 5 && this.curWebPageUrl == '') {
+        ElMessage({
+          message: '网页机器人必须填写url!',
+          type: 'error',
+        });
+      } else if(this.curRobotId == 6 && this.selectedFile == null) {
+        ElMessage({
+          message: '文件机器人必须选择文件',
+          type: 'error',
+        });
       }
       else
       {
