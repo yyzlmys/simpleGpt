@@ -1,25 +1,24 @@
 from langchain.chains.summarize import load_summarize_chain
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
-from langchain_text_splitters import CharacterTextSplitter
-from Util.modelchoise import (
-    get_openai_chat_model
+from langchain.text_splitter import TokenTextSplitter
+from modelchoice.modelchoise import (
+    get_openai_chat_model,
+    get_zhipu_chat_model
 )
 class TextReader:
     """
     This class can process super long information, but it is also spend many tokens.
     """
     def __init__(self):
-        self.chat_model = get_openai_chat_model(temperature=0)
+        self.chat_model = get_zhipu_chat_model(temperature=0)
         self.summarize_chain = None
         self.init_summarize_chain()
         self.cleanup_chain = None
         self.init_cleanup_chain()
 
-    def splitter_docs(self, docs: list[Document]) -> list[Document]:
-        text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
-            chunk_size=3000, chunk_overlap=0
-        )
+    def splitter_docs(self, docs: list[Document], token_limit=3000) -> list[Document]:
+        text_splitter = TokenTextSplitter(chunk_size=token_limit, chunk_overlap=100)
         combined_text = " ".join([doc.page_content for doc in docs])
         combined_doc = Document(page_content=combined_text)
         return text_splitter.split_documents([combined_doc])
@@ -78,7 +77,7 @@ class TextReader:
         self.cleanup_chain = cleanup_prompt | self.chat_model
 
     def get_answer(self, question: str, docs: list[Document]) -> str:
-        docs = self.splitter_docs(docs)
+        docs = self.splitter_docs(docs=docs, token_limit=100000)
         result = self.summarize_chain.invoke({"input_documents": docs, "question": question})
         ans = result['output_text']
         result = self.cleanup_chain.invoke({"question": question, 'text': ans})
