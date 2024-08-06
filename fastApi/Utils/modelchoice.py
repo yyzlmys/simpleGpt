@@ -1,4 +1,4 @@
-def get_openai_chat_model(temperature=0.8):
+def get_openai_chat_model(temperature=0.7):
     from langchain_openai import ChatOpenAI
     chat_model_openai = ChatOpenAI(
         model="gpt-4o-mini",
@@ -28,11 +28,11 @@ def get_spark_chat_model():
     return chat_model_spark
 
 
-def get_zhipu_chat_model():
+def get_zhipu_chat_model(temperature=0.7):
     from langchain_community.chat_models import ChatZhipuAI
     chat_model_zhipuai = ChatZhipuAI(
         model="glm-4",
-        temperature=0.8,
+        temperature=temperature,
     )
     return chat_model_zhipuai
 

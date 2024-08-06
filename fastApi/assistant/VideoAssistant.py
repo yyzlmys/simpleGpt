@@ -73,18 +73,20 @@ class VideoAssistant:
         SESSDATA = "0f00c213%2C1738140166%2C91131%2A82CjB8XCHcEOkK8gP1OeojgdJJGbhI-MipkVOoKvKSAiMXSpUbJZkSSnysQ4V6QsBRI6wSVlJzX0pxLUZieHhwQlNNNmdlZ1QyRndqSFNaTUFBZGZaRTI2MWhGMkNlaHlrZE90UmxWaTY2d2ZxWm9nVXZSX1RocnZDdS1yU0hFd1R1MldCUUpteVpnIIEC"
         BUVID3 = "E560893E-C386-0454-4C9A-82221C7175CA65691infoc"
         BILI_JCT = "1efb137e133084406ea4e6c1c6d49320"
-        loader = BiliBiliLoader(
-            [
-                video_url,
-            ],
-            sessdata=SESSDATA,
-            bili_jct=BILI_JCT,
-            buvid3=BUVID3,
-        )
-        # 尝试获取字幕信息
-        docs = loader.load()
-        if not docs[0].page_content == '':
-            self.subtitle = docs[0].page_content
+        try:
+            loader = BiliBiliLoader(
+                [
+                    video_url,
+                ],
+                sessdata=SESSDATA,
+                bili_jct=BILI_JCT,
+                buvid3=BUVID3,
+            )
+            docs = loader.load()
+            if not docs[0].page_content == '':
+                self.subtitle = docs[0].page_content
+        except Exception as e:
+            self.subtitle = None
 
     def init_youtube_video(self, video_url: str):
         try:
