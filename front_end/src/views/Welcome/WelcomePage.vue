@@ -21,7 +21,7 @@
         <p>欢迎探索 ！</p>
       </section>
       <section class="section section-dark">
-        <h2> 基于OpenAI ChatGPT-4o 的大语言模型</h2>
+        <h2> 基于OpenAI ChatGPT-4o-mini 的大语言模型</h2>
       </section>
       <section class="section section-grey">
         <h2>期待您的宝贵意见！</h2>
