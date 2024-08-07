@@ -1,10 +1,20 @@
 <template>
   <div class="robot-list" v-loading="loading">
+    <!-- 官方机器人 -->
+    <h2 class="section-title">官方机器人</h2>
     <RobotItem 
-      v-for="(robot, index) in robots" 
-      :key="index" 
+      v-for="robot in officialRobots" 
+      :key="robot.id" 
       :name="robot.name"
-      :intro="robot.intro"
+      @click="handleItemClick(robot.id)" 
+    />
+
+    <!-- 自定义机器人 -->
+    <h2 class="section-title">自定义机器人</h2>
+    <RobotItem 
+      v-for="robot in customRobots" 
+      :key="robot.id" 
+      :name="robot.name"
       @click="handleItemClick(robot.id)" 
     />
     <RobotItem 
@@ -51,6 +61,8 @@ export default {
   },
   setup() {
     const robots = ref([]);
+    const officialRobots = ref([]);
+    const customRobots = ref([]);
     const dialogFormVisible = ref(false);
     const formLabelWidth = '80px';
     const form = ref({
@@ -64,6 +76,11 @@ export default {
       loading.value = true;
       const response = await api_listRobots();
       robots.value = response.data.data;
+
+      // 分类机器人
+      officialRobots.value = robots.value.filter(robot => robot.userId === 1);
+      customRobots.value = robots.value.filter(robot => robot.userId !== 1);
+      
       loading.value = false;
     };
 
@@ -97,7 +114,8 @@ export default {
     onMounted(fetchRobots);
 
     return {
-      robots,
+      officialRobots,
+      customRobots,
       form,
       loading,
       dialogFormVisible,
@@ -116,6 +134,11 @@ export default {
   gap: 20px;
   justify-content: center;
   padding: 20px;
+}
+.section-title {
+  width: 100%;
+  text-align: left;
+  margin: 20px 0 10px;
 }
 .dialog-footer {
   text-align: right;

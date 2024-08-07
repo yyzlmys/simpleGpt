@@ -31,7 +31,7 @@
               </el-col>
               <el-col :span="12">
                 <el-button @click="toggleTheme" class="theme-toggle-btn">
-                  {{ isDarkTheme ? '🌙' : '☀️' }}
+                  {{ isGreenTheme ? '👁️' : '☀️' }}
                 </el-button>
               </el-col>
             </el-row>
@@ -64,10 +64,13 @@ export default {
     this.init();
 
     // 读取本地存储的主题设置
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      this.isDarkTheme = true;
-      document.body.classList.add('dark-theme');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'green') {
+      this.isGreenTheme = true;
+      document.body.classList.add('green-theme');
+    } else {
+      this.isGreenTheme = false;
+      document.body.classList.add('light-theme');
     }
   },
   data() {
@@ -75,7 +78,7 @@ export default {
       isLogin: false,
       username: '',
       loginDialogVisible: false,
-      isDarkTheme: false, // 默认浅色主题
+      isGreenTheme: false, // 默认浅色主题
     };
   },
   methods: {
@@ -103,13 +106,16 @@ export default {
       this.$router.push('/chat');
     },
     toggleTheme() {
-      this.isDarkTheme = !this.isDarkTheme;
-      if (this.isDarkTheme) {
-        document.body.classList.add('dark-theme');
+      this.isGreenTheme = !this.isGreenTheme;
+      if (this.isGreenTheme) {
+        document.body.classList.add('green-theme');
+        document.body.classList.remove('light-theme');
+        localStorage.setItem('theme', 'green');
       } else {
-        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
+        document.body.classList.remove('green-theme');
+        localStorage.setItem('theme', 'light');
       }
-      localStorage.setItem('theme', this.isDarkTheme ? 'dark' : 'light');
     }
   }
 }
@@ -127,7 +133,7 @@ export default {
 
 .logo h2 {
   margin: 0;
-  color: black;
+  color: var(--primary-color);
   font-size: 24px;
 }
 
@@ -139,19 +145,19 @@ export default {
 .nav-item {
   margin-right: 50px;
   text-decoration: none;
-  color: black;
+  color: var(--primary-color);
   font-weight: bold;
   font-size: 20px;
   transition: color 0.3s, transform 0.3s;
 }
 
 .nav-item:hover {
-  color: #66b1ff;
+  color: var(--nav-item-hover-color);
   transform: scale(1.1);
 }
 
 .active-link {
-  color: #66b1ff;
+  color: var(--nav-item-hover-color);
 }
 
 .login-area {
@@ -162,11 +168,12 @@ export default {
 
 .custom-main {
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--background-color);
 }
 
 .el-divider--horizontal {
   margin: 0;
+  border-color: var(--divider-color);
 }
 
 .btn {
@@ -194,7 +201,7 @@ export default {
 
 .username {
   margin-right: 20px;
-  color: black;
+  color: var(--primary-color);
   text-decoration: none;
 }
 

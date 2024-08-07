@@ -1,40 +1,56 @@
 <template>
-    <div class="container">
-      <el-descriptions v-loading="loading" class="info-section" title="个人信息" :column="1" border >
-        <el-descriptions-item>
-          <template #label>
-            <el-icon :style="iconStyle">
+  <div class="container">
+    <el-descriptions v-loading="loading" class="info-section" title="个人信息" :column="1" border>
+      <el-descriptions-item>
+        <template #label>
+          <el-icon :style="iconStyle">
             <user />
-            </el-icon> 
-            用户名
-          </template>
-          {{ info.username }}
-        </el-descriptions-item>
-        <template #extra>
-          <el-button type="primary" size="small" @click="changeUsername">修改用户名</el-button>
-          <el-button type="primary" size="small" @click="changePassword">修改密码</el-button>
+          </el-icon>
+          用户名
         </template>
-      </el-descriptions>
-  
-      <div class="action-buttons">
-        <el-button type="danger" @click="logout">退出登录</el-button>
-        <el-button type="danger" @click="reallyDeactivateAccount">注销账号</el-button>
-      </div>
+        {{ info.username }}
+      </el-descriptions-item>
+      <template #extra>
+        <el-button type="primary" size="large" @click="changeUsername">修改用户名</el-button>
+        <el-button type="primary" size="large" @click="changePassword">修改密码</el-button>
+      </template>
+    </el-descriptions>
+
+    <div class="action-buttons">
+      <el-button type="danger" size="large" @click="logout">退出登录</el-button>
+      <el-button type="danger" size="large" @click="reallyDeactivateAccount">注销账号</el-button>
     </div>
+
+    <div class="theme-switcher">
+      <el-button @click="setLightTheme" class="theme-toggle-btn" size="large">浅色模式 ☀️</el-button>
+      <el-button @click="setGreenTheme" class="theme-toggle-btn" size="large">护眼模式 👁️</el-button>
+    </div>
+  </div>
 </template>
 
 <script>
 import { api_changePassword, api_deactivateAccount, api_getInfo, api_update } from '@/api/personal';
 import { removeToken } from "@/utils/auth";
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
   mounted() {
     this.init();
+    // 读取本地存储的主题设置
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'green') {
+      this.isGreenTheme = true;
+      document.body.classList.add('green-theme');
+    } else {
+      this.isGreenTheme = false;
+      document.body.classList.add('light-theme');
+    }
   },
   data() {
     return {
       info: null,
       loading: true,
+      isGreenTheme: false, // 默认浅色主题
     };
   },
   methods: {
@@ -64,7 +80,7 @@ export default {
               type: 'success',
               message: '修改成功！'
             });
-            this.logout(); 
+            this.logout();
           } else {
             this.$message({
               type: 'error',
@@ -131,6 +147,20 @@ export default {
       api_deactivateAccount().then((response) => {
         this.logout();
       });
+    },
+
+    setLightTheme() {
+      this.isGreenTheme = false;
+      document.body.classList.add('light-theme');
+      document.body.classList.remove('green-theme');
+      localStorage.setItem('theme', 'light');
+    },
+
+    setGreenTheme() {
+      this.isGreenTheme = true;
+      document.body.classList.add('green-theme');
+      document.body.classList.remove('light-theme');
+      localStorage.setItem('theme', 'green');
     }
   }
 };
@@ -141,22 +171,44 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 40px;
+  font-size: 18px;
 }
 
 .info-section {
   width: 100%;
-  max-width: 400px;
-  margin-bottom: 20px;
+  max-width: 500px;
+  margin-bottom: 30px;
+  font-size: 18px;
 }
 
 .action-buttons {
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-bottom: 20px;
+}
+
+.theme-switcher {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .el-button {
-  margin: 10px 10px;
+  margin: 10px 20px;
+}
+
+.theme-toggle-btn {
+  background-color: #f0f1f2;
+  color: #333;
+  border: none;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.theme-toggle-btn:hover {
+  background-color: #d4e9d6;
+  transform: scale(1.05);
 }
 </style>

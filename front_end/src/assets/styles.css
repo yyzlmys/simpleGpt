@@ -1,0 +1,51 @@
+/* src/assets/styles.css */
+
+/* 默认浅色主题 */
+.light-theme {
+  --primary-color: #000; /* 主色，通常用于文本 */
+  --background-color: #fff; /* 背景色 */
+  --text-color: #333; /* 正文文本颜色 */
+  --header-background-color: #f8f9fa; /* 头部背景色 */
+  --nav-item-hover-color: #66b1ff; /* 导航链接悬停时的颜色 */
+  --divider-color: #e0e0e0; /* 分割线颜色 */
+
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.light-theme .header {
+  background-color: var(--header-background-color);
+}
+
+.light-theme .nav-item:hover {
+  color: var(--nav-item-hover-color);
+}
+
+.light-theme .el-divider--horizontal {
+  border-color: var(--divider-color);
+}
+
+/* 浅绿色护眼主题 */
+.green-theme {
+  --primary-color: #2e3d49; /* 主色，通常用于文本 */
+  --background-color: #d4e9d6; /* 背景色，浅绿色 */
+  --text-color: #2e3d49; /* 正文文本颜色 */
+  --header-background-color: #c4e3c5; /* 头部背景色，稍深的绿色 */
+  --nav-item-hover-color: #4a7c59; /* 导航链接悬停时的颜色 */
+  --divider-color: #b2c7b1; /* 分割线颜色 */
+
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.green-theme .header {
+  background-color: var(--header-background-color);
+}
+
+.green-theme .nav-item:hover {
+  color: var(--nav-item-hover-color);
+}
+
+.green-theme .el-divider--horizontal {
+  border-color: var(--divider-color);
+}

@@ -14,12 +14,14 @@
       </section>
       <section class="section section-light">
         <h2>SimpleGPT 可以为您做什么：</h2>
-        <p>吃饭</p>
-        <p>睡觉</p>
-        <p>打游戏</p>
+        <p>高效处理文档</p>
+        <p>提高您的网页搜索效率</p>
+        <p>帮助您编写程序</p>
+        <p>总结视频内容...</p>
+        <p>欢迎探索 ！</p>
       </section>
       <section class="section section-dark">
-        <h2>基于智谱AI的大语言模型</h2>
+        <h2> 基于OpenAI ChatGPT-4o 的大语言模型</h2>
       </section>
       <section class="section section-grey">
         <h2>期待您的宝贵意见！</h2>
