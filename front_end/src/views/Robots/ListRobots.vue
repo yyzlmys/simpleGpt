@@ -1,27 +1,33 @@
 <template>
-  <div class="robot-list" v-loading="loading">
-    <!-- 官方机器人 -->
-    <h2 class="section-title">官方机器人</h2>
-    <RobotItem 
-      v-for="robot in officialRobots" 
-      :key="robot.id" 
-      :name="robot.name"
-      @click="handleItemClick(robot.id)" 
-    />
+  <div v-loading="loading">
 
-    <!-- 自定义机器人 -->
-    <h2 class="section-title">自定义机器人</h2>
-    <RobotItem 
-      v-for="robot in customRobots" 
-      :key="robot.id" 
-      :name="robot.name"
-      @click="handleItemClick(robot.id)" 
-    />
-    <RobotItem 
-      name="+" 
-      isAddButton 
-      @click="dialogFormVisible = true" 
-    />
+    <div v-loading="loading" class="robot-list">
+      <h2>官方机器人</h2>
+      <div class="robot-grid">
+        <div v-for="robot in officialRobots" :key="robot.id" class="robot-card" @click="handleItemClick(robot.id)" tabindex="0">
+          <img :src="require('@/assets/ChatGPT.png')" :alt="robot.name" class="robot-icon">
+          <div class="robot-info">
+            <h3>{{ robot.name }}</h3>
+            <p>{{ robot.intro }}</p>
+          </div>
+        </div>
+      </div>
+
+      <h2>您专属的机器人</h2>
+      <div class="robot-grid">
+        <div v-for="robot in personalRobots" :key="robot.id" class="robot-card" @click="handleItemClick(robot.id)" tabindex="0">
+          <img :src="require('@/assets/ChatGPT.png')" :alt="robot.name" class="robot-icon">
+          <div class="robot-info">
+            <h3>{{ robot.name }}</h3>
+            <p>{{ robot.intro }}</p>
+          </div>
+        </div>
+        <div class="add-robot-card" @click="dialogFormVisible = true" tabindex="0">
+          <span class="add-icon">+</span>
+          <span>添加新机器人</span>
+        </div>
+      </div>
+    </div>
 
     <el-dialog v-model="dialogFormVisible" title="创建机器人" width="800">
       <el-form :model="form">
@@ -65,7 +71,6 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import RobotItem from './RobotItem.vue';
 import { api_listRobots, api_create_robot } from '@/api/robot';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
@@ -73,12 +78,11 @@ import router from '@/router';
 export default {
   name: 'ListRobots',
   components: {
-    RobotItem,
   },
   setup() {
     const robots = ref([]);
     const officialRobots = ref([]);
-    const customRobots = ref([]);
+    const personalRobots = ref([]);
     const dialogFormVisible = ref(false);
     const formLabelWidth = '200px';
     const form = ref({
@@ -95,7 +99,7 @@ export default {
 
       // 分类机器人
       officialRobots.value = robots.value.filter(robot => robot.userId === 1);
-      customRobots.value = robots.value.filter(robot => robot.userId !== 1);
+      personalRobots.value = robots.value.filter(robot => robot.userId !== 1);
       
       loading.value = false;
     };
@@ -131,7 +135,7 @@ export default {
 
     return {
       officialRobots,
-      customRobots,
+      personalRobots,
       form,
       loading,
       dialogFormVisible,
@@ -145,18 +149,83 @@ export default {
 
 <style scoped>
 .robot-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
   padding: 20px;
+  font-family: Arial, sans-serif;
 }
-.section-title {
-  width: 100%;
-  text-align: left;
-  margin: 20px 0 10px;
+
+h2 {
+  margin-bottom: 15px;
 }
+
+.robot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.robot-card, .add-robot-card {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.robot-card:hover, .add-robot-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.robot-card:focus, .add-robot-card:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+.robot-icon {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  border-radius: 10px;
+}
+
+.robot-info {
+  flex: 1;
+}
+
+.robot-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.robot-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.user-count {
+  font-size: 12px;
+  color: #888;
+}
+
+.add-robot-card {
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  color: #666;
+}
+
+.add-icon {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
 .dialog-footer {
   text-align: right;
+  margin-top: 20px;
 }
 </style>

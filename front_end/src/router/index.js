@@ -5,14 +5,10 @@ import ListKnowledgeBase from '@/views/KnowledgeBase/ListKnowlwdgeBase.vue'
 import ManageKnowledgeBase from '@/views/KnowledgeBase/ManageKnowledgeBase.vue'
 import Chat from '@/views/Chat/ChatView.vue'
 import Personal from '@/views/Personal/Personal.vue'
-
 import WelcomePage from '@/views/Welcome/WelcomePage.vue';
-
 import Guide from '@/views/Guide/Guide.vue';
-
 import ListRobots from '@/views/Robots/ListRobots.vue';
 import ManageRobot from '@/views/Robots/ManageRobot.vue';
-import RobotItem from '@/views/Robots/RobotItem.vue';
 import YouTubeDetail from '@/views/Robots/OfficialRobots/YouTubeDetail.vue';
 import BiliDetail from '@/views/Robots/OfficialRobots/BiliDetail.vue';
 import Coding from '@/views/Robots/OfficialRobots/Coding.vue';
