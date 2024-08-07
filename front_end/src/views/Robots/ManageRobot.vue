@@ -110,6 +110,8 @@ export default {
     background-color: #ffffff;
   }
 
+
+
   .delete-btn {
     position: absolute;
     top: 10px;
@@ -131,6 +133,7 @@ export default {
     align-items: center;
     margin-bottom: 20px;
     width: 100%;
+    background-color: #ffffff;
   }
 
   .avatar {
@@ -139,7 +142,6 @@ export default {
     border-radius: 50%;
     object-fit: cover;
     margin-right: 20px;
-    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
   }
 
   .name {
