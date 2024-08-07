@@ -5,14 +5,16 @@
         <el-row :gutter="20" style="width: 100%;">
           <el-col :span="5">
             <div class="logo">
-              <h2>极简智能</h2>
+              <router-link to="/chat" style="text-decoration: none;">
+                <h2>极简智能</h2>
+              </router-link>
             </div>
           </el-col>
           <el-col :span="11">
             <div class="nav-links">
               <router-link to="/chat" exact class="nav-item" active-class="active-link">首页</router-link>
               <router-link to="/knowledgebase" class="nav-item" active-class="active-link">知识库</router-link>
-              <router-link to="/robot" class="nav-item" active-class="active-link">Robot</router-link>
+              <router-link to="/robot" class="nav-item" active-class="active-link">机器人广场</router-link>
               <router-link to="/guide" class="nav-item" active-class="active-link">使用指南</router-link>
               <router-link to="/personal" class="nav-item" active-class="active-link">个人中心</router-link>
             </div>

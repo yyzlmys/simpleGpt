@@ -1,5 +1,5 @@
 <template>
-    <div class="knowledge-base-list">
+    <div v-loading="loading" class="knowledge-base-list">
       <h1>知识库列表</h1>
       <div class="add-card">
         <button class="add-button" @click="dialogFormVisible = true">添加新知识库</button>
@@ -111,12 +111,6 @@
     },
   };
   </script>
-  
-  
-  
-  
-  
-  
   
   <style scoped>
 .knowledge-base-list {

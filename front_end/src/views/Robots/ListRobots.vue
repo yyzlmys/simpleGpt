@@ -5,7 +5,7 @@
       <h2>官方机器人</h2>
       <div class="robot-grid">
         <div v-for="robot in officialRobots" :key="robot.id" class="robot-card" @click="handleItemClick(robot.id)" tabindex="0">
-          <img :src="require('@/assets/ChatGPT.png')" :alt="robot.name" class="robot-icon">
+          <img :src="getAvatarSrc(robot.id)" :alt="robot.name" class="robot-icon">
           <div class="robot-info">
             <h3>{{ robot.name }}</h3>
             <p>{{ robot.intro }}</p>
@@ -16,7 +16,7 @@
       <h2>您专属的机器人</h2>
       <div class="robot-grid">
         <div v-for="robot in personalRobots" :key="robot.id" class="robot-card" @click="handleItemClick(robot.id)" tabindex="0">
-          <img :src="require('@/assets/ChatGPT.png')" :alt="robot.name" class="robot-icon">
+          <img :src="getAvatarSrc(robot.id)" :alt="robot.name" class="robot-icon">
           <div class="robot-info">
             <h3>{{ robot.name }}</h3>
             <p>{{ robot.intro }}</p>
@@ -92,6 +92,25 @@ export default {
     });
     const loading = ref(true);
 
+    const getAvatarSrc = (robotId) => {
+      switch (robotId) {
+        case 1:
+          return require('@/assets/ChatGPT.png');
+        case 2:
+          return require('@/assets/Google.png');
+        case 3:
+          return require('@/assets/github.png');
+        case 4:
+          return require('@/assets/Bilibili.png');
+        case 5:
+          return require('@/assets/chrome.png');
+        case 6:
+          return require('@/assets/file.png');
+        default:
+          return require('@/assets/ChatGPT.png');
+      }
+    };
+
     const fetchRobots = async () => {
       loading.value = true;
       const response = await api_listRobots();
@@ -142,6 +161,7 @@ export default {
       formLabelWidth,
       handleItemClick,
       handleCreateRobot,
+      getAvatarSrc,
     };
   },
 };

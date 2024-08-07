@@ -9,11 +9,6 @@ import WelcomePage from '@/views/Welcome/WelcomePage.vue';
 import Guide from '@/views/Guide/Guide.vue';
 import ListRobots from '@/views/Robots/ListRobots.vue';
 import ManageRobot from '@/views/Robots/ManageRobot.vue';
-import YouTubeDetail from '@/views/Robots/OfficialRobots/YouTubeDetail.vue';
-import BiliDetail from '@/views/Robots/OfficialRobots/BiliDetail.vue';
-import Coding from '@/views/Robots/OfficialRobots/Coding.vue';
-import Default from '@/views/Robots/OfficialRobots/Default.vue';
-import WebSearch from '@/views/Robots/OfficialRobots/WebSearch.vue';
 
 const routes = [
   {
@@ -72,32 +67,6 @@ const routes = [
     name: 'ManageRobot',
     component: ManageRobot
   },
-  {
-    path: '/robot/bili',
-    name: 'BiliRobot',
-    component: BiliDetail
-  },
-  {
-    path: '/robot/youtube',
-    name: 'YouTubeRobot',
-    component: YouTubeDetail
-  },
-  {
-    path: '/robot/webSearch',
-    name: 'WebSearch',
-    component: WebSearch
-  },
-  {
-    path: '/robot/Default',
-    name: 'Default',
-    component: Default
-  },
-  {
-    path: '/robot/coding',
-    name: 'Coding',
-    component: Coding
-  },
-
   {
     path: '/:pathMatch(.*)*',
     redirect: '/404'

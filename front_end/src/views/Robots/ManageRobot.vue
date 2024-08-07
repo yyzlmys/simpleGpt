@@ -5,7 +5,7 @@
     <div class="robot">
       <button v-if="robotUserId !== 1" class="delete-btn" @click="handleDeleteRobot">×</button>
       <div class="header">
-        <img class="avatar" src="../../assets/ChatGPT.png" alt="Avatar">
+        <img class="avatar" :src=getAvatarSrc alt="Avatar">
         <h2 class="name">{{ this.robotName }}</h2>
       </div>
       <p class="introduction">{{ this.robotIntro }}</p>
@@ -24,6 +24,26 @@ import router from '@/router';
 
 export default {
   name: 'ManageRobot',
+  computed: {
+    getAvatarSrc() {
+      switch (this.id) {
+        case 1:
+          return require('@/assets/ChatGPT.png');
+        case 2:
+          return require('@/assets/Google.png');
+        case 3:
+          return require('@/assets/github.png');
+        case 4:
+          return require('@/assets/Bilibili.png');
+        case 5:
+          return require('@/assets/chrome.png');
+        case 6:
+          return require('@/assets/file.png');
+        default:
+          return require('@/assets/ChatGPT.png');
+      }
+    }
+  },
   data() {
     return {
       id: this.$route.params.id,
@@ -41,6 +61,7 @@ export default {
     async getRobotDetails(id) {
       const response = await api_getRobot(id);
       const data = response.data.data;
+      this.id = data.id;
       this.robotName = data.name;
       this.robotIntro = data.intro;
       this.robotPrompt = data.prompt;
@@ -139,7 +160,7 @@ export default {
   .avatar {
     width: 80px;
     height: 80px;
-    border-radius: 50%;
+    /* border-radius: 50%; */
     object-fit: cover;
     margin-right: 20px;
   }
