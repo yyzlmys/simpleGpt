@@ -64,9 +64,7 @@ const routes = [
     name: 'Welcome',
     component: WelcomePage
   },
-
-
-
+  
   {
     path: '/robot',
     name: 'ListRobot',

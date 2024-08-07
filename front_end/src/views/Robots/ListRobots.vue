@@ -23,16 +23,32 @@
       @click="dialogFormVisible = true" 
     />
 
-    <el-dialog v-model="dialogFormVisible" title="创建机器人" width="500">
+    <el-dialog v-model="dialogFormVisible" title="创建机器人" width="800">
       <el-form :model="form">
-        <el-form-item label="名称" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off" />
+        <el-form-item label="名称" :label-width="formLabelWidth" label-position="top">
+          <el-input
+              v-model="form.name"
+              placeholder="填写机器人名称..."
+              clearable
+            ></el-input>
         </el-form-item>
-        <el-form-item label="简介" :label-width="formLabelWidth">
-          <el-input v-model="form.intro" autocomplete="off" />
+        <el-form-item label="简介" :label-width="formLabelWidth" label-position="top">
+          <el-input
+              v-model="form.intro"
+              placeholder="这是一个苏格拉底式的机器人，用于让我在对话的过程中学会思考..."
+              clearable
+              type="textarea"
+              :autosize="{ minRows: 2 }"
+            ></el-input>
         </el-form-item>
-        <el-form-item label="提示" :label-width="formLabelWidth">
-          <el-input v-model="form.prompt" autocomplete="off" />
+        <el-form-item label="system prompt" :label-width="formLabelWidth" label-position="top">
+          <el-input
+              v-model="form.prompt"
+              placeholder="你是一个苏格拉底式的导师，回答问题总是采用引导的方式，以此来让用户通过逐步思考来解决问题..."
+              clearable
+              type="textarea"
+              :autosize="{ minRows: 2 }"
+            ></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -64,7 +80,7 @@ export default {
     const officialRobots = ref([]);
     const customRobots = ref([]);
     const dialogFormVisible = ref(false);
-    const formLabelWidth = '80px';
+    const formLabelWidth = '200px';
     const form = ref({
       name: '',
       intro: '',

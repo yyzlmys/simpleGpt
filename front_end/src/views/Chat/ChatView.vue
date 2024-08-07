@@ -385,12 +385,18 @@ export default {
         if (event.shiftKey) {
           return;
         } else {
-          // 移除可能存在的尾部换行符
           this.inputString = this.inputString.trim();
+          if(this.sendDisabled){
+            ElMessage({
+                message: '上一轮对话还未结束，请耐心等待！',
+                type: 'warning',
+            });
+            return; 
+          }
           this.getResponse();
         }
       }
-},
+    },
 
     initWebsocket(url) {
       if (this.ws) {
