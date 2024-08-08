@@ -164,6 +164,7 @@ export default {
       },
       curWebPageUrl: '',
       selectedFile: null,
+      websocketUrl: null,
     };
   },
   beforeDestroy() {
@@ -173,6 +174,7 @@ export default {
   },
   methods: {
     init() {
+      this.websocketUrl = process.env.VUE_APP_WEBSOCKET_URL + '/get';
       this.listKnowlwdgeBase();
       this.listConversions();
       this.listRobot();
@@ -287,7 +289,7 @@ export default {
           this.isNeedGetName = true;
         }
         // 建立 websocket 
-        this.initWebsocket('ws://firstdraft.cn:8080/get');
+        this.initWebsocket(this.websocketUrl);
         // console.log(this.curRobotId)
         if(this.curRobotId == 4)
         {
