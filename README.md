@@ -15,14 +15,17 @@
 
 后端项目位于 `/back_end` 与`/fastApi`文件夹，按照以下步骤，即可成功运行该项目。
 
-## 1. 安装 IntelliJ IDEA
+## 1. 安装 `jdk`
+ 安装 `jdk21` 并配置环境变量
+
+## 2. 安装 IntelliJ IDEA
  从 [IntelliJ IDEA 官网](https://www.jetbrains.com/idea/) 下载并安装。
 
-## 2. 打开 Spring Boot 项目
+## 3. 打开 Spring Boot 项目
 
 1. 使用 IntelliJ IDEA 打开项目。
 
-## 3. 安装 Maven
+## 4. 安装 Maven
 
 1. 官方网站下载并安装 [Maven](https://maven.apache.org/).
 2. 验证是否安装成功，命令行执行：
@@ -32,31 +35,31 @@
    ```
 如果出现版本信息，即安装成功。
 
-## 4. 配置 Maven
+## 5. 配置 Maven
 
 1. `IDEA` 中设置 `Maven` 为自己安装的版本
 
 
-## 5. 设置 MySQL 数据库
+## 6. 设置 MySQL 数据库
 
 1. 安装 MySQL。
 2. 为该项目创建数据库并配置用户权限。
 3. 运行`/back_end/src/main/resources`目录下的`create_table.sql`脚本，建表
 
-## 6. 安装redis
+## 7. 安装redis
 
 1. 安装 Redis。
 2. 启动 Redis 服务器。
 
-## 7. 配置 `application.properties` 信息
+## 8. 配置 `application.properties` 信息
 1. 在 `/back_end/src/main/resources` 下的 `application - 副本.properties` 重命名为 `application.properties`
 2. 修改 `application.properties` 中相关数据库信息为自己前两步中配置的信息
    
-## 8. 启动 `springboot` 项目
+## 9. 启动 `springboot` 项目
 1. 在 `IDEA` 中启动该项目即可
 
 
-## 9. 安装 `python3.11`
+## 10. 安装 `python3.11`
 
 1. 从 Python 官网 下载并安装。
 2. 验证是否安装成功，命令行执行：
@@ -66,17 +69,17 @@
    ```
    出现版本信息，则安装成功。
 
-## 10. 安装所需的包
+## 11. 安装所需的包
 
 1. 使用 `pip` 命令安装项目所需的包文件
 
 ## 12. 配置 `FastAPI` 项目
 1. 详见 `/fastApi/README.md`
 
-## 12. 运行 `FastAPI`项目
+## 13. 运行 `FastAPI`项目
 1. 用python运行fastapi后端
 
-## 13. 注意事项：
+## 14. 注意事项：
 - `FastAPI` 项目运行于 `8080` 端口，请勿修改，且确保无占用
 - `FastAPI` 项目和 `springboot` 项目应运行于同一台主机之下
 
